@@ -8,9 +8,11 @@ type KorisnikContextType = {
   korisnik: Korisnik | null;
   inicijalnoUcitavanje: boolean;
   ulogujKorisnika: (podaci: AuthResponse) => void;
+  postaviPodatkeZaKorisnika: (korisnik: Korisnik) => void;
   daLiKorisnikImaUlogu: (uloga: UlogaKorisnika) => boolean;
   dajToken: () => string;
   odjaviKorisnika: () => void;
+  daLiJeGost: () => boolean;
 };
 
 export const KorisnikContext = createContext<KorisnikContextType>(
@@ -55,6 +57,10 @@ export const KorisnikProvider = (props: { children: any }) => {
     return korisnik.uloga === uloga;
   };
 
+  const postaviPodatkeZaKorisnika = (korisnik: Korisnik) => {
+    postaviKorisnika(korisnik);
+  };
+
   const dajToken = () => (token ? token : "");
 
   const odjaviKorisnika = () => {
@@ -63,6 +69,8 @@ export const KorisnikProvider = (props: { children: any }) => {
     postaviToken("");
     postaviKorisnika(null);
   };
+
+  const daLiJeGost = () => !korisnik;
 
   return (
     <KorisnikContext.Provider
@@ -73,6 +81,8 @@ export const KorisnikProvider = (props: { children: any }) => {
         daLiKorisnikImaUlogu,
         dajToken,
         odjaviKorisnika,
+        postaviPodatkeZaKorisnika,
+        daLiJeGost,
       }}
     >
       {props.children}

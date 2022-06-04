@@ -13,6 +13,8 @@ export interface Korisnik {
   telefon: string;
   godinaRodjenja: string;
   uloga: UlogaKorisnika;
+  kreiranDatuma: Date;
+  azuriranDatuma: Date;
 }
 
 export interface PrijavaKorisnika {
@@ -25,6 +27,9 @@ export interface AuthResponse {
   korisnik: Korisnik;
 }
 
-export type RegistrujKorisnika = Omit<Korisnik, "id" | "uloga"> & {
+export type RegistrujKorisnika = Omit<
+  Korisnik,
+  "id" | "uloga" | "kreiran" | "azuriran"
+> & {
   lozinka: string;
 };

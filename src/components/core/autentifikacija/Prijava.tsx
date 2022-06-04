@@ -11,7 +11,7 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useKorisnik } from "../../../hooks/useKorisnik";
-import { daLiJeValidanFormatEmailAdrese } from "../../utils/regex/regex";
+import { daLiJeValidanFormatEmailAdrese } from "../../../shared/regex/regex";
 import { FormWrapper, Wrapper } from "../../utils/ui";
 import { PrijavaKorisnika } from "../../../tipovi";
 import { useNavigate } from "react-router-dom";

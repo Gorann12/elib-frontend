@@ -8,7 +8,7 @@ interface GuardedRouteProps {
   children: any;
 }
 
-export const GuardedRoute = (props: GuardedRouteProps) => {
+export const UlogovanKorisnikGuard = (props: GuardedRouteProps) => {
   const { uloga, children } = props;
   const { daLiKorisnikImaUlogu } = useContext(KorisnikContext);
 
@@ -17,4 +17,14 @@ export const GuardedRoute = (props: GuardedRouteProps) => {
   }
 
   return children;
+};
+
+export const GostGuard = (props: { children: any }) => {
+  const { daLiJeGost } = useContext(KorisnikContext);
+
+  if (!daLiJeGost()) {
+    return <Navigate to="/profil" replace={true} />;
+  }
+
+  return props.children;
 };

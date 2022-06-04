@@ -8,7 +8,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { daLiJeValidanFormatEmailAdrese } from "../../utils/regex/regex";
+import { daLiJeValidanFormatEmailAdrese } from "../../../shared/regex/regex";
 import { FormWrapper, Wrapper } from "../../utils/ui";
 import { RegistrujKorisnika } from "../../../tipovi";
 import { useKorisnik } from "../../../hooks/useKorisnik";

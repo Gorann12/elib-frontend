@@ -17,7 +17,7 @@ const KorisnikMobilniMeni = () => {
   const { korisnik, odjaviKorisnika } = useContext(KorisnikContext);
 
   return (
-    <Box display={{ md: "none" }}>
+    <Box display={{ lg: "none" }}>
       <Menu closeOnBlur={true} closeOnSelect={true}>
         {({ isOpen }) => (
           <>
@@ -33,6 +33,9 @@ const KorisnikMobilniMeni = () => {
               <MenuItem as={Link} to={"/profil"}>
                 Moj profil
               </MenuItem>
+              <MenuItem as={Link} to={"/knjige"}>
+                Knjige
+              </MenuItem>
               <MenuItem as={Link} to={"/istorija-kupovine"}>
                 Istorija kupovine
               </MenuItem>
@@ -47,22 +50,33 @@ const KorisnikMobilniMeni = () => {
 };
 
 const KorisnikDesktopMeni = () => {
-  const { korisnik } = useContext(KorisnikContext);
+  const { odjaviKorisnika } = useContext(KorisnikContext);
 
   return (
-    <HStack spacing={"1rem"} display={{ base: "none", md: "block" }}>
-      <Button colorScheme={"linkedin"} variant={"link"} as={Link} to="/profil">
-        {korisnik && korisnik.ime}
+    <HStack spacing={"1rem"} display={{ base: "none", lg: "block" }}>
+      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/profil">
+        Profil
+      </Button>
+      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/knjige">
+        Knjige
       </Button>
       <Button
-        colorScheme={"linkedin"}
+        colorScheme={"teal"}
         variant={"link"}
         as={Link}
         to="/istorija-kupovine"
       >
         Istorija kupovine
       </Button>
-      <IconButton icon={<FaCartPlus />} aria-label="Korpa" />
+      <Button colorScheme={"teal"} variant={"link"} onClick={odjaviKorisnika}>
+        Odjavi se
+      </Button>
+      <IconButton
+        colorScheme={"teal"}
+        icon={<FaCartPlus />}
+        aria-label="Korpa"
+        variant={"outline"}
+      />
     </HStack>
   );
 };

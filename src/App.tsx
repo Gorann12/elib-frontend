@@ -6,7 +6,10 @@ import { useContext } from "react";
 import { KorisnikContext } from "./context/KorisnikContext";
 import { Spinner } from "@chakra-ui/react";
 import { Profil } from "./components/core/stranice/profil";
-import { GuardedRoute } from "./components/utils/GuardedRoute";
+import {
+  UlogovanKorisnikGuard,
+  GostGuard,
+} from "./components/utils/GuardedRoute";
 import { UlogaKorisnika } from "./tipovi";
 
 export const App = () => {
@@ -20,14 +23,28 @@ export const App = () => {
         <Router>
           <Navbar />
           <Routes>
-            <Route path="prijava" element={<Prijava />} />
-            <Route path="registracija" element={<Registracija />} />\
+            <Route
+              path="prijava"
+              element={
+                <GostGuard>
+                  <Prijava />
+                </GostGuard>
+              }
+            />
+            <Route
+              path="registracija"
+              element={
+                <GostGuard>
+                  <Registracija />
+                </GostGuard>
+              }
+            />
             <Route
               path="profil"
               element={
-                <GuardedRoute uloga={UlogaKorisnika.KORISNIK}>
+                <UlogovanKorisnikGuard uloga={UlogaKorisnika.KORISNIK}>
                   <Profil />
-                </GuardedRoute>
+                </UlogovanKorisnikGuard>
               }
             />
           </Routes>
