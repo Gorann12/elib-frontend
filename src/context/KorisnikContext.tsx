@@ -1,10 +1,6 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-import {
-  Korisnik,
-  AuthResponse,
-  UlogaKorisnika,
-} from "../components/core/tipovi";
+import { Korisnik, AuthResponse, UlogaKorisnika } from "../tipovi";
 
 const token_key = "loginToken";
 
@@ -12,9 +8,9 @@ type KorisnikContextType = {
   korisnik: Korisnik | null;
   inicijalnoUcitavanje: boolean;
   ulogujKorisnika: (podaci: AuthResponse) => void;
-  daLiJeAdmin: () => boolean;
-  daLiJeKorisnikUlogovan: () => boolean;
+  daLiKorisnikImaUlogu: (uloga: UlogaKorisnika) => boolean;
   dajToken: () => string;
+  odjaviKorisnika: () => void;
 };
 
 export const KorisnikContext = createContext<KorisnikContextType>(
@@ -31,7 +27,11 @@ export const KorisnikProvider = (props: { children: any }) => {
 
     if (token) {
       axios
-        .get<Korisnik>("/me")
+        .get<Korisnik>("/korisnik", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
         .then(({ data }) => {
           ulogujKorisnika({ korisnik: data, token });
         })
@@ -49,13 +49,20 @@ export const KorisnikProvider = (props: { children: any }) => {
     postaviToken(token);
   };
 
-  const daLiJeAdmin = (): boolean => {
-    return !!korisnik && korisnik.uloga === UlogaKorisnika.ADMIN;
+  const daLiKorisnikImaUlogu = (uloga: UlogaKorisnika) => {
+    if (!korisnik) return false;
+
+    return korisnik.uloga === uloga;
   };
 
-  const daLiJeKorisnikUlogovan = () => Boolean(korisnik);
-
   const dajToken = () => (token ? token : "");
+
+  const odjaviKorisnika = () => {
+    localStorage.removeItem(token_key);
+
+    postaviToken("");
+    postaviKorisnika(null);
+  };
 
   return (
     <KorisnikContext.Provider
@@ -63,9 +70,9 @@ export const KorisnikProvider = (props: { children: any }) => {
         korisnik,
         inicijalnoUcitavanje,
         ulogujKorisnika,
-        daLiJeAdmin,
-        daLiJeKorisnikUlogovan,
+        daLiKorisnikImaUlogu,
         dajToken,
+        odjaviKorisnika,
       }}
     >
       {props.children}

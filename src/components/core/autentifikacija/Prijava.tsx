@@ -13,7 +13,8 @@ import { useForm } from "react-hook-form";
 import { useKorisnik } from "../../../hooks/useKorisnik";
 import { daLiJeValidanFormatEmailAdrese } from "../../utils/regex/regex";
 import { FormWrapper, Wrapper } from "../../utils/ui";
-import { PrijavaKorisnika } from "../tipovi";
+import { PrijavaKorisnika } from "../../../tipovi";
+import { useNavigate } from "react-router-dom";
 
 export const Prijava = () => {
   const {
@@ -24,13 +25,16 @@ export const Prijava = () => {
   const [ucitava, postaviUcitava] = useState(false);
   const { prijava } = useKorisnik();
   const toast = useToast();
+  const ruter = useNavigate();
 
   const prijaviKorisnika = async (podaci: PrijavaKorisnika) => {
     postaviUcitava(true);
     try {
-      const korisnik = await prijava(podaci);
+      await prijava(podaci);
+      ruter("/profil");
     } catch (e: any) {
       const errorPoruka = e.response.data.message;
+
       toast({
         title: "Error",
         description: Array.isArray(errorPoruka)

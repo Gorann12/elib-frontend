@@ -94,7 +94,7 @@ export const Autocomplete = () => {
             >
               <Link
                 data-suggestion
-                to={`${knjiga.id}`}
+                to={`/knjiga/${knjiga.id}`}
                 style={{ width: "100%" }}
               >
                 <Box

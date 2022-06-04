@@ -4,11 +4,15 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Text,
+  useToast,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { daLiJeValidanFormatEmailAdrese } from "../../utils/regex/regex";
 import { FormWrapper, Wrapper } from "../../utils/ui";
-import { RegistrujKorisnika } from "../tipovi";
+import { RegistrujKorisnika } from "../../../tipovi";
+import { useKorisnik } from "../../../hooks/useKorisnik";
+import { useNavigate } from "react-router-dom";
 
 export const Registracija = () => {
   const {
@@ -16,15 +20,35 @@ export const Registracija = () => {
     register,
     formState: { errors, isSubmitting },
   } = useForm<RegistrujKorisnika>();
+  const { registracija } = useKorisnik();
+  const toast = useToast();
+  const ruter = useNavigate();
 
-  const registrujKorisnika = (podaci: RegistrujKorisnika) => {
-    console.log("Podaci", podaci);
+  const registrujKorisnika = async (podaci: RegistrujKorisnika) => {
+    try {
+      await registracija(podaci);
+
+      ruter("/profil");
+    } catch (e: any) {
+      const errorPoruka = e.response.data.message;
+
+      toast({
+        title: "Error",
+        description: Array.isArray(errorPoruka)
+          ? errorPoruka.join(", ")
+          : errorPoruka,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   return (
     <Wrapper>
       <form onSubmit={handleSubmit(registrujKorisnika)}>
         <FormWrapper>
+          <Text fontSize="xl">Registracija</Text>
           <FormControl isInvalid={!!errors.email}>
             <FormLabel htmlFor="email">Email</FormLabel>
             <Input
