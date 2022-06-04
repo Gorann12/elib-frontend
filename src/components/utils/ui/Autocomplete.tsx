@@ -12,12 +12,6 @@ import { ChangeEvent, useEffect, useRef, useState, FocusEvent } from "react";
 import { FaChevronCircleRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-enum FOKUSIRANI_ELEMENT {
-  LISTA = "lista",
-  INPUT = "input",
-  VAN = "van",
-}
-
 export const Autocomplete = () => {
   const [knjige, postaviKnjige] = useState<{ naslov: string; id: number }[]>(
     []
@@ -27,7 +21,6 @@ export const Autocomplete = () => {
 
   useEffect(() => {
     let timer = setTimeout(() => {
-      console.log("Request sent");
       axios
         .get("knjiga", {
           params: {
@@ -62,7 +55,12 @@ export const Autocomplete = () => {
   };
 
   return (
-    <Flex maxW="15rem" position={"relative"} onBlur={skloniSugestije}>
+    <Flex
+      maxW={"25rem"}
+      w={"100%"}
+      position={"relative"}
+      onBlur={skloniSugestije}
+    >
       <Input
         borderColor={"gray.400"}
         bgColor="white"
@@ -84,6 +82,7 @@ export const Autocomplete = () => {
           maxHeight={"120px"}
           height={knjige.length * 40 + "px"}
           overflowY={"scroll"}
+          zIndex={100000000000000}
         >
           {knjige.map((knjiga) => (
             <ListItem
