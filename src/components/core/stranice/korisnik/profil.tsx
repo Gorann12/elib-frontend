@@ -4,19 +4,24 @@ import {
   EditableInput,
   EditablePreview,
   Heading,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
   Text,
   useToast,
   VStack,
 } from "@chakra-ui/react";
 import { useContext } from "react";
-import { KorisnikContext } from "../../../context/KorisnikContext";
-import { useKorisnik } from "../../../hooks/useKorisnik";
-import { lowerCamelCaseToDisplay } from "../../../shared/regex/regex";
-import { Wrapper } from "../../utils/ui";
+import { KorisnikContext } from "../../../../context/KorisnikContext";
+import { useKorisnik } from "../../../../hooks/useKorisnik";
+import { lowerCamelCaseToDisplay } from "../../../../shared/regex/regex";
+import { Wrapper } from "../../../utils/ui";
+import { MdVerifiedUser } from "react-icons/md";
+import { UlogaKorisnika } from "../../../../tipovi";
 
 export const Profil = () => {
   const { korisnik } = useContext(KorisnikContext);
-  const { id, uloga, kreiranDatuma, azuriranDatuma, email, ...podaci } =
+  const { id, uloga, kreiranDatuma, azuriranDatuma, ...podaci } =
     korisnik || {};
   const { izmeniKorisnika } = useKorisnik();
   const toast = useToast();
@@ -46,9 +51,22 @@ export const Profil = () => {
 
   return (
     <Wrapper>
-      <Heading fontSize={"2xl"} color={"gray.700"} mt={10}>
+      <Tag
+        size={"md"}
+        variant={"solid"}
+        colorScheme={uloga && uloga === UlogaKorisnika.ADMIN ? "red" : "teal"}
+        mt={10}
+        mb={2}
+      >
+        <TagLeftIcon as={MdVerifiedUser} />
+        <TagLabel>{uloga?.toLowerCase()}</TagLabel>
+      </Tag>
+      <Heading fontSize={"2xl"} color={"gray.700"}>
         Profil {`${korisnik?.ime} ${korisnik?.prezime}`} korisnika
       </Heading>
+      <Text mb={4} color={"gray.600"}>
+        Kreiran: {new Date(kreiranDatuma || "").toDateString()}
+      </Text>
       <VStack bgColor={"blue.50"} p={3} align={"left"} spacing={6}>
         {podaci &&
           Object.keys(podaci).map(
@@ -64,6 +82,7 @@ export const Profil = () => {
                     onSubmit={(vrednost: string) =>
                       handleSubmit(key as keyof typeof podaci, vrednost)
                     }
+                    isDisabled={["email"].includes(key)}
                   >
                     <EditablePreview />
                     <EditableInput />

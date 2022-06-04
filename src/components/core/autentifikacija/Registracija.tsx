@@ -8,11 +8,11 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
-import { daLiJeValidanFormatEmailAdrese } from "../../../shared/regex/regex";
 import { FormWrapper, Wrapper } from "../../utils/ui";
 import { RegistrujKorisnika } from "../../../tipovi";
 import { useKorisnik } from "../../../hooks/useKorisnik";
 import { useNavigate } from "react-router-dom";
+import { daLiJeValidanFormatEmailAdrese } from "../../../shared/regex/regex";
 
 export const Registracija = () => {
   const {

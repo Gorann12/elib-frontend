@@ -8,11 +8,22 @@ interface GuardedRouteProps {
   children: any;
 }
 
-export const UlogovanKorisnikGuard = (props: GuardedRouteProps) => {
+export const UlogaGuard = (props: GuardedRouteProps) => {
   const { uloga, children } = props;
   const { daLiKorisnikImaUlogu } = useContext(KorisnikContext);
 
   if (!daLiKorisnikImaUlogu(uloga)) {
+    return <Navigate to="/prijava" replace={true} />;
+  }
+
+  return children;
+};
+
+export const UlogovanKorisnikGuard = (props: { children: any }) => {
+  const { children } = props;
+  const { daLiJeGost } = useContext(KorisnikContext);
+
+  if (daLiJeGost()) {
     return <Navigate to="/prijava" replace={true} />;
   }
 

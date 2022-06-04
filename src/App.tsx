@@ -5,12 +5,14 @@ import { Prijava, Registracija } from "./components/core/autentifikacija";
 import { useContext } from "react";
 import { KorisnikContext } from "./context/KorisnikContext";
 import { Spinner } from "@chakra-ui/react";
-import { Profil } from "./components/core/stranice/profil";
+import { Profil } from "./components/core/stranice/korisnik/profil";
 import {
   UlogovanKorisnikGuard,
   GostGuard,
+  UlogaGuard,
 } from "./components/utils/GuardedRoute";
 import { UlogaKorisnika } from "./tipovi";
+import { KategorijaForma } from "./components/core/stranice/kategorija/KategorijaForma";
 
 export const App = () => {
   const { inicijalnoUcitavanje } = useContext(KorisnikContext);
@@ -24,7 +26,7 @@ export const App = () => {
           <Navbar />
           <Routes>
             <Route
-              path="prijava"
+              path="/prijava"
               element={
                 <GostGuard>
                   <Prijava />
@@ -32,7 +34,7 @@ export const App = () => {
               }
             />
             <Route
-              path="registracija"
+              path="/registracija"
               element={
                 <GostGuard>
                   <Registracija />
@@ -40,11 +42,19 @@ export const App = () => {
               }
             />
             <Route
-              path="profil"
+              path="/profil"
               element={
-                <UlogovanKorisnikGuard uloga={UlogaKorisnika.KORISNIK}>
+                <UlogovanKorisnikGuard>
                   <Profil />
                 </UlogovanKorisnikGuard>
+              }
+            />
+            <Route
+              path="/kategorija/nova"
+              element={
+                <UlogaGuard uloga={UlogaKorisnika.ADMIN}>
+                  <KategorijaForma />
+                </UlogaGuard>
               }
             />
           </Routes>

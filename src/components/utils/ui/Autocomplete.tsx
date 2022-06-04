@@ -8,7 +8,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { ChangeEvent, useEffect, useRef, useState, FocusEvent } from "react";
+import { ChangeEvent, useEffect, useState, FocusEvent } from "react";
 import { FaChevronCircleRight } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
