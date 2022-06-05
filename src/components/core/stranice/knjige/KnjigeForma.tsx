@@ -177,6 +177,7 @@ export const KnjigeForma = () => {
                   },
                 })}
                 min={0}
+                step={0.01}
               />
               <FormErrorMessage>
                 {errors.cena && errors.cena.message}
@@ -188,6 +189,9 @@ export const KnjigeForma = () => {
               <Controller
                 control={control}
                 name="idKategorija"
+                rules={{
+                  required: "Ovo polje je obavezno",
+                }}
                 render={({ field: { onChange } }) => (
                   <Select
                     onChange={(val) => onChange(val.map((c) => c.value))}
