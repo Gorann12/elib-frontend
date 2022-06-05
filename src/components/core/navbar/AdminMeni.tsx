@@ -28,7 +28,9 @@ export const AdminMeni = () => {
           <MenuList>
             <MenuGroup title={"Izlistaj"}>
               <MenuItem>knjige</MenuItem>
-              <MenuItem>autore</MenuItem>
+              <MenuItem as={Link} to={"/autor/lista"}>
+                autore
+              </MenuItem>
               <MenuItem as={Link} to={"/kategorija/lista"}>
                 kategorije
               </MenuItem>

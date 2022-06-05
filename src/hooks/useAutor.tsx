@@ -16,5 +16,9 @@ export const useAutor = () => {
     return data;
   };
 
-  return { kreiraj };
+  const dajSveAutore: () => Promise<{ data: Autor[] }> = () => {
+    return axios.get<Autor[]>("/autor");
+  };
+
+  return { kreiraj, dajSveAutore };
 };
