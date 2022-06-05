@@ -32,9 +32,9 @@ export const useKnjiga = () => {
   };
 
   const dajKnjige: (
-    stranica: number,
-    sortirajPo: "naslov" | "cena",
-    smerSortiranja: "asc" | "desc"
+    stranica?: number,
+    sortirajPo?: "naslov" | "cena",
+    smerSortiranja?: "asc" | "desc"
   ) => Promise<Knjiga[]> = async (
     stranica = 0,
     sortirajPo = "cena",
@@ -53,10 +53,10 @@ export const useKnjiga = () => {
   };
 
   const dajKnjigePoKategoriji: (
-    stranica: number,
     idKategorije: number,
-    sortirajPo: "naslov" | "cena",
-    smerSortiranja: "asc" | "desc"
+    stranica?: number,
+    sortirajPo?: "naslov" | "cena",
+    smerSortiranja?: "asc" | "desc"
   ) => Promise<{ brojKnjiga: number; knjige: Knjiga[] }> = async (
     idKategorije,
     stranica = 0,
