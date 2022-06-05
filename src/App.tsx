@@ -20,6 +20,7 @@ import { AutorLista } from "./components/core/stranice/autor/AutorLista";
 import { AutorDetaljnije } from "./components/core/stranice/autor/AutorDetaljnije";
 import { KnjigeForma } from "./components/core/stranice/knjige/KnjigeForma";
 import { KnjigeLista } from "./components/core/stranice/knjige/KnjigeLista";
+import { KnjigaDetaljnije } from "./components/core/stranice/knjige/KnjigaDetaljnije";
 
 export const App = () => {
   const { inicijalnoUcitavanje } = useContext(KorisnikContext);
@@ -89,6 +90,7 @@ export const App = () => {
             />
 
             <Route path="/knjiga/lista" element={<KnjigeLista />} />
+            <Route path="/knjiga/:id" element={<KnjigaDetaljnije />} />
           </Routes>
         </Router>
       )}

@@ -75,5 +75,17 @@ export const useKnjiga = () => {
     return data;
   };
 
-  return { kreirajKnjigu, azurirajKnjigu, dajKnjige, dajKnjigePoKategoriji };
+  const dajKnjigu: (id: number) => Promise<Knjiga> = async (id) => {
+    const { data } = await axios.get<Knjiga>(`/knjiga/${id}`);
+
+    return data;
+  };
+
+  return {
+    kreirajKnjigu,
+    azurirajKnjigu,
+    dajKnjige,
+    dajKnjigePoKategoriji,
+    dajKnjigu,
+  };
 };
