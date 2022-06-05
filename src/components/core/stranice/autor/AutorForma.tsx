@@ -61,7 +61,7 @@ export const AutorForma = () => {
       {!ucitavanje ? (
         <form onSubmit={handleSubmit(kreiraj)}>
           <FormWrapper>
-            <Text>Kreiraj Autora</Text>
+            <Text fontSize={"xl"}>Kreiraj Autora</Text>
             <FormControl isInvalid={!!errors.ime}>
               <FormLabel htmlFor="ime">Ime</FormLabel>
               <Input

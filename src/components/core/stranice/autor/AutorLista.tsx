@@ -26,9 +26,7 @@ export const AutorLista = () => {
   useEffect(() => {
     dajSveAutore()
       .then((res) => {
-        const { data } = res;
-
-        postaviAutore(data);
+        postaviAutore(res);
       })
       .catch((e: any) => {
         const errorPoruka = e.response.data.message;

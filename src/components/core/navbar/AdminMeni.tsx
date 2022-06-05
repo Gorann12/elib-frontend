@@ -36,11 +36,13 @@ export const AdminMeni = () => {
               </MenuItem>
             </MenuGroup>
             <MenuGroup title={"Kreiraj"}>
-              <MenuItem>knjigu</MenuItem>
-              <MenuItem as={Link} to={"/autor/nov"}>
+              <MenuItem as={Link} to={"/knjiga/novo"}>
+                knjigu
+              </MenuItem>
+              <MenuItem as={Link} to={"/autor/novo"}>
                 autora
               </MenuItem>
-              <MenuItem as={Link} to={"/kategorija/nova"}>
+              <MenuItem as={Link} to={"/kategorija/novo"}>
                 kategoriju
               </MenuItem>
             </MenuGroup>

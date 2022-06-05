@@ -18,6 +18,7 @@ import { KategorijaDetaljnije } from "./components/core/stranice/kategorija/Kate
 import { AutorForma } from "./components/core/stranice/autor/AutorForma";
 import { AutorLista } from "./components/core/stranice/autor/AutorLista";
 import { AutorDetaljnije } from "./components/core/stranice/autor/AutorDetaljnije";
+import { KnjigeForma } from "./components/core/stranice/knjige/KnjigeForma";
 
 export const App = () => {
   const { inicijalnoUcitavanje } = useContext(KorisnikContext);
@@ -56,7 +57,7 @@ export const App = () => {
             />
 
             <Route
-              path="/kategorija/nova"
+              path="/kategorija/novo"
               element={
                 <UlogaGuard uloga={UlogaKorisnika.ADMIN}>
                   <KategorijaForma />
@@ -67,7 +68,7 @@ export const App = () => {
             <Route path="/kategorija/:id" element={<KategorijaDetaljnije />} />
 
             <Route
-              path="/autor/nov"
+              path="/autor/novo"
               element={
                 <UlogaGuard uloga={UlogaKorisnika.ADMIN}>
                   <AutorForma />
@@ -76,6 +77,15 @@ export const App = () => {
             />
             <Route path="/autor/lista" element={<AutorLista />} />
             <Route path="/autor/:id" element={<AutorDetaljnije />} />
+
+            <Route
+              path="/knjiga/novo"
+              element={
+                <UlogaGuard uloga={UlogaKorisnika.ADMIN}>
+                  <KnjigeForma />
+                </UlogaGuard>
+              }
+            />
           </Routes>
         </Router>
       )}

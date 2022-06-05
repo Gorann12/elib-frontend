@@ -18,8 +18,10 @@ export const useAutor = () => {
     return data;
   };
 
-  const dajSveAutore: () => Promise<{ data: Autor[] }> = () => {
-    return axios.get<Autor[]>("/autor");
+  const dajSveAutore: () => Promise<Autor[]> = async () => {
+    const { data } = await axios.get<Autor[]>("/autor");
+
+    return data;
   };
 
   const dajAutora: (id: number) => Promise<Autor> = async (id) => {
