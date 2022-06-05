@@ -15,41 +15,38 @@ import {
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { KorisnikContext } from "../../../../context/KorisnikContext";
-import { useKategorija } from "../../../../hooks/useKategorija";
 import { lowerCamelCaseToDisplay } from "../../../../shared/regex/regex";
-import { UlogaKorisnika } from "../../../../tipovi";
-import { Kategorija } from "../../../../tipovi";
+import { Autor, UlogaKorisnika } from "../../../../tipovi";
 import { Wrapper } from "../../../utils/ui";
 import { FaTrash } from "react-icons/fa";
 import { Dijalog } from "../../../utils/ui/Dijalog";
+import { useAutor } from "../../../../hooks/useAutor";
 
-export const KategorijaDetaljnije = () => {
+export const AutorDetaljnije = () => {
   const { state } = useLocation();
   const { id } = useParams();
 
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const { dajKategoriju, izmeniKategoriju, izbrisiKategoriju } =
-    useKategorija();
+  const { dajAutora, izmeniAutora, izbrisiAutora } = useAutor();
   const { daLiKorisnikImaUlogu, daLiJeGost } = useContext(KorisnikContext);
   const toast = useToast();
   const [ucitavanje, postaviUcitavanje] = useState(state == null);
-  const [kategorija, postaviKategoriju] = useState<Kategorija | null>(
-    state as Kategorija
+  const [autor, postaviAutora] = useState<Autor | null>(state as Autor);
+  const [editovanAutor, postaviEditovanogAutora] = useState<Autor>(
+    state as Autor
   );
-  const [editovanaKategorija, postaviEditovanuKategoriju] =
-    useState<Kategorija>(state as Kategorija);
-  const { id: idKategorije, ...podaci } = kategorija || {};
+  const { id: idAutora, ...podaci } = autor || {};
 
   useEffect(() => {
     if (state == null) {
-      dajKategoriju(parseInt(id || "-1"))
-        .then((preuzetaKategorija) => {
-          postaviEditovanuKategoriju(preuzetaKategorija);
-          postaviKategoriju(preuzetaKategorija);
+      dajAutora(parseInt(id || "-1"))
+        .then((preuzetAutor) => {
+          postaviEditovanogAutora(preuzetAutor);
+          postaviAutora(preuzetAutor);
         })
-        .catch(() => navigate("/kategorija/lista"))
+        .catch(() => navigate("/autor/lista"))
         .finally(() => postaviUcitavanje(false));
     }
   }, []);
@@ -59,8 +56,8 @@ export const KategorijaDetaljnije = () => {
       onClose();
       postaviUcitavanje(true);
 
-      izbrisiKategoriju(parseInt(id))
-        .then(() => navigate("/kategorija/lista"))
+      izbrisiAutora(parseInt(id))
+        .then(() => navigate("/autor/lista"))
         .catch((e: any) => {
           const errorPoruka = e.response.data.message;
 
@@ -80,8 +77,8 @@ export const KategorijaDetaljnije = () => {
   };
 
   const handleChange = (key: keyof typeof podaci, vrednost: string) => {
-    if (editovanaKategorija) {
-      postaviEditovanuKategoriju((proslaVrednost) => ({
+    if (editovanAutor) {
+      postaviEditovanogAutora((proslaVrednost) => ({
         ...proslaVrednost,
         [key]: vrednost,
       }));
@@ -91,17 +88,26 @@ export const KategorijaDetaljnije = () => {
   const handleSubmit = async (key: keyof typeof podaci, vrednost: string) => {
     try {
       if (id) {
-        const novaKategorija = await izmeniKategoriju(parseInt(id), {
-          ...kategorija,
-          [key]: vrednost,
-        });
+        if (
+          autor &&
+          typeof autor[key] === "number" &&
+          Number.isNaN(parseInt(vrednost))
+        ) {
+          throw new Error(`${key} Mora biti broj`);
+        }
 
-        postaviKategoriju(novaKategorija);
+        const izmenjeniAutor =
+          autor && typeof autor[key] === "number"
+            ? { ...autor, [key]: parseInt(vrednost) }
+            : { ...autor, [key]: vrednost };
+
+        const novAutor = await izmeniAutora(parseInt(id), izmenjeniAutor);
+        postaviAutora(novAutor);
       }
     } catch (e: any) {
-      const errorPoruka = e.response.data.message;
+      const errorPoruka = e?.response?.data?.message || e.message || "";
 
-      postaviEditovanuKategoriju(kategorija || ({} as Kategorija));
+      postaviEditovanogAutora(autor || ({} as Autor));
       toast({
         title: "Error",
         description: Array.isArray(errorPoruka)
@@ -120,7 +126,7 @@ export const KategorijaDetaljnije = () => {
         <>
           <HStack justify={"space-between"} mt={10} mb={3}>
             <Heading fontSize={"2xl"} color={"gray.700"}>
-              {kategorija?.naziv}
+              {autor?.ime}
             </Heading>
             {daLiKorisnikImaUlogu(UlogaKorisnika.ADMIN) && (
               <Button
@@ -150,9 +156,9 @@ export const KategorijaDetaljnije = () => {
                         defaultValue={
                           podaci[key as keyof typeof podaci] + "" || ""
                         }
-                        value={
-                          editovanaKategorija[key as keyof typeof podaci] +
-                            "" || ""
+                        color={"gray.700"}
+                        onSubmit={(vrednost: string) =>
+                          handleSubmit(key as keyof typeof podaci, vrednost)
                         }
                         onChange={(promenjenaVrednost: string) =>
                           handleChange(
@@ -160,9 +166,9 @@ export const KategorijaDetaljnije = () => {
                             promenjenaVrednost
                           )
                         }
-                        color={"gray.700"}
-                        onSubmit={(vrednost: string) =>
-                          handleSubmit(key as keyof typeof podaci, vrednost)
+                        value={
+                          editovanAutor[key as keyof typeof editovanAutor] +
+                            "" || ""
                         }
                         isDisabled={
                           daLiKorisnikImaUlogu(UlogaKorisnika.KORISNIK) ||

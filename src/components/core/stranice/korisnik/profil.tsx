@@ -11,23 +11,44 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { KorisnikContext } from "../../../../context/KorisnikContext";
 import { useKorisnik } from "../../../../hooks/useKorisnik";
 import { lowerCamelCaseToDisplay } from "../../../../shared/regex/regex";
 import { Wrapper } from "../../../utils/ui";
 import { MdVerifiedUser } from "react-icons/md";
-import { UlogaKorisnika } from "../../../../tipovi";
+import { Korisnik, UlogaKorisnika } from "../../../../tipovi";
 
 export const Profil = () => {
   const { korisnik } = useContext(KorisnikContext);
   const { id, uloga, kreiranDatuma, azuriranDatuma, ...podaci } =
     korisnik || {};
+  const [editovanKorisnik, postaviEditovanogKorisnika] = useState<Korisnik>(
+    korisnik || ({} as Korisnik)
+  );
+
   const { izmeniKorisnika } = useKorisnik();
   const toast = useToast();
 
+  const handleChange = async (key: keyof typeof korisnik, vrednost: string) => {
+    if (editovanKorisnik) {
+      postaviEditovanogKorisnika((proslaVrednost) => ({
+        ...proslaVrednost,
+        [key]: vrednost,
+      }));
+    }
+  };
+
   const handleSubmit = async (key: keyof typeof korisnik, vrednost: string) => {
     try {
+      if (
+        korisnik &&
+        typeof korisnik[key] === "number" &&
+        Number.isNaN(parseInt(vrednost))
+      ) {
+        throw new Error(`${key} Mora biti broj`);
+      }
+
       const izmenjeniKorisnik =
         korisnik && typeof korisnik[key] === "number"
           ? { ...korisnik, [key]: parseInt(vrednost) }
@@ -35,8 +56,11 @@ export const Profil = () => {
 
       await izmeniKorisnika(izmenjeniKorisnik);
     } catch (e: any) {
-      const errorPoruka = e.response.data.message;
+      const errorPoruka = e?.response?.data?.message || e.message;
 
+      // {} as Korisnik samo zbog typescripta, ali zna se da korisnik mora da postoji
+      // (ne moze biti null u ovoj komponenti) jer postoji guard za ovu rutu
+      postaviEditovanogKorisnika(korisnik || ({} as Korisnik));
       toast({
         title: "Error",
         description: Array.isArray(errorPoruka)
@@ -81,6 +105,15 @@ export const Profil = () => {
                     color={"gray.700"}
                     onSubmit={(vrednost: string) =>
                       handleSubmit(key as keyof typeof podaci, vrednost)
+                    }
+                    onChange={(promenjenaVrednost: string) =>
+                      handleChange(
+                        key as keyof typeof podaci,
+                        promenjenaVrednost
+                      )
+                    }
+                    value={
+                      editovanKorisnik[key as keyof typeof podaci] + "" || ""
                     }
                     isDisabled={["email"].includes(key)}
                   >

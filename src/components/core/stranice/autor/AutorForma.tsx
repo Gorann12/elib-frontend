@@ -23,7 +23,7 @@ export const AutorForma = () => {
     formState: { errors, isSubmitting },
   } = useForm<KreirajAutora>();
   const [ucitavanje, postaviUcitavanje] = useState(false);
-  const { kreiraj: kreirajAutora } = useAutor();
+  const { kreirajAutora } = useAutor();
   const toast = useToast();
 
   const kreiraj = async (podaci: KreirajAutora) => {

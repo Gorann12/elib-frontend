@@ -17,6 +17,7 @@ import { KategorijaLista } from "./components/core/stranice/kategorija/Kategorij
 import { KategorijaDetaljnije } from "./components/core/stranice/kategorija/KategorijaDetaljnije";
 import { AutorForma } from "./components/core/stranice/autor/AutorForma";
 import { AutorLista } from "./components/core/stranice/autor/AutorLista";
+import { AutorDetaljnije } from "./components/core/stranice/autor/AutorDetaljnije";
 
 export const App = () => {
   const { inicijalnoUcitavanje } = useContext(KorisnikContext);
@@ -74,6 +75,7 @@ export const App = () => {
               }
             />
             <Route path="/autor/lista" element={<AutorLista />} />
+            <Route path="/autor/:id" element={<AutorDetaljnije />} />
           </Routes>
         </Router>
       )}
