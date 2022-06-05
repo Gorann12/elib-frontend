@@ -36,7 +36,11 @@ interface ReducerState {
   kategorijaId: number | null;
 }
 
-type ReducerActions = { type: "inkrementuj" | "dekrementuj" };
+type ReducerActions =
+  | { type: "inkrementuj" | "dekrementuj" }
+  | { type: "sortirajPo"; payload: SortiranjePo }
+  | { type: "poredakSortiranja"; payload: PoredakSortiranja }
+  | { type: "kategorija"; payload: number };
 
 const initialState: ReducerState = {
   stranica: parseInt(localStorage.getItem("stranica") || "0"),
@@ -52,6 +56,12 @@ const reducer = (state: ReducerState, action: ReducerActions) => {
       return { ...state, stranica: state.stranica + 1 };
     case "dekrementuj":
       return { ...state, stranica: state.stranica - 1 };
+    case "sortirajPo":
+      return { ...state, sortirajPo: action.payload };
+    case "poredakSortiranja":
+      return { ...state, poredakSortiranja: action.payload };
+    case "kategorija":
+      return { ...state, kategorijaId: action.payload };
   }
 };
 
@@ -81,15 +91,21 @@ export const KnjigeLista = () => {
       .finally(() => postaviUcitavanje(false));
   }, []);
 
-  const promeniPoredakSortiranja = (vrednost: PoredakSortiranja) => {
-    postaviUcitavanje(true);
-  };
+  useEffect(() => {}, []);
 
-  const promeniSortiranjePo = (vrednost: SortiranjePo) => {};
+  // const promeniPoredakSortiranja = (vrednost: PoredakSortiranja) => {
+  //   dispatch({ type: "poredakSortiranja", payload: vrednost })
+  // };
 
-  const promeniKategoriju = (vrednost: number) => {};
+  // const promeniSortiranjePo = (vrednost: SortiranjePo) => {
+  //   dispatch({ type: "sortirajPo", payload: vrednost});
+  // };
 
-  const promeniStranicu = (dodaj: number) => {};
+  // const promeniKategoriju = (vrednost: number) => {
+  //   dispatch({ type })
+  // };
+
+  // const promeniStranicu = (dodaj: number) => {};
 
   return (
     <Wrapper>
@@ -108,7 +124,10 @@ export const KnjigeLista = () => {
                 id="kategorije"
                 placeholder="Izaberite kategoriju"
                 onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                  promeniKategoriju(parseInt(e.target.value))
+                  dispatch({
+                    type: "kategorija",
+                    payload: parseInt(e.target.value),
+                  })
                 }
               >
                 {kategorije.map((kategorija) => (
@@ -123,7 +142,10 @@ export const KnjigeLista = () => {
               <Select
                 id="sortirajPo"
                 onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                  promeniSortiranjePo(e.target.value as SortiranjePo)
+                  dispatch({
+                    type: "sortirajPo",
+                    payload: e.target.value as SortiranjePo,
+                  })
                 }
               >
                 <option value="cena" defaultChecked={true}>
@@ -137,7 +159,10 @@ export const KnjigeLista = () => {
               <Select
                 id="poredak"
                 onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                  promeniPoredakSortiranja(e.target.value as PoredakSortiranja)
+                  dispatch({
+                    type: "poredakSortiranja",
+                    payload: e.target.value as PoredakSortiranja,
+                  })
                 }
               >
                 <option value="asc" defaultChecked={true}>
@@ -149,7 +174,7 @@ export const KnjigeLista = () => {
           </HStack>
           <TableContainer>
             <Table variant="simple" mt={10}>
-              {/* <TableCaption>Stranica: {stranica}</TableCaption> */}
+              <TableCaption>Stranica: {state.stranica}</TableCaption>
               <Thead>
                 <Tr>
                   <Th>Naslov</Th>
@@ -188,14 +213,14 @@ export const KnjigeLista = () => {
             <IconButton
               aria-label="Prethodna stranica"
               icon={<FaChevronLeft />}
-              // isDisabled={stranica === 0}
-              onClick={() => promeniStranicu(-1)}
+              isDisabled={state.stranica === 0}
+              onClick={() => dispatch({ type: "dekrementuj" })}
             />
             <IconButton
               aria-label="Sledeca stranica"
               icon={<FaChevronRight />}
               isDisabled={knjige.length < 5}
-              onClick={() => promeniStranicu(1)}
+              onClick={() => dispatch({ type: "inkrementuj" })}
             />
           </HStack>
         </>
