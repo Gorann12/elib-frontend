@@ -15,6 +15,7 @@ import { UlogaKorisnika } from "./tipovi";
 import { KategorijaForma } from "./components/core/stranice/kategorija/KategorijaForma";
 import { KategorijaLista } from "./components/core/stranice/kategorija/KategorijaLista";
 import { KategorijaDetaljnije } from "./components/core/stranice/kategorija/KategorijaDetaljnije";
+import { AutorForma } from "./components/core/stranice/autor/AutorForma";
 
 export const App = () => {
   const { inicijalnoUcitavanje } = useContext(KorisnikContext);
@@ -51,6 +52,7 @@ export const App = () => {
                 </UlogovanKorisnikGuard>
               }
             />
+
             <Route
               path="/kategorija/nova"
               element={
@@ -61,6 +63,15 @@ export const App = () => {
             />
             <Route path="/kategorija/lista" element={<KategorijaLista />} />
             <Route path="/kategorija/:id" element={<KategorijaDetaljnije />} />
+
+            <Route
+              path="/autor/nov"
+              element={
+                <UlogaGuard uloga={UlogaKorisnika.ADMIN}>
+                  <AutorForma />
+                </UlogaGuard>
+              }
+            />
           </Routes>
         </Router>
       )}

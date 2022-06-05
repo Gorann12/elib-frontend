@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useKategorija } from "../../../../hooks/useKategorija";
-import { Kategorija } from "../../../../tipovi/kategorija";
+import { Kategorija } from "../../../../tipovi";
 import { Wrapper } from "../../../utils/ui";
 
 export const KategorijaLista = () => {

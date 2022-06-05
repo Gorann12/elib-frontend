@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useContext } from "react";
 import { KorisnikContext } from "../context/KorisnikContext";
-import { Kategorija, KreirajKategoriju } from "../tipovi/kategorija";
+import { Kategorija, KreirajKategoriju } from "../tipovi";
 
 export const useKategorija = () => {
   const { dajToken } = useContext(KorisnikContext);

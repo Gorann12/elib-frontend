@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useKategorija } from "../../../../hooks/useKategorija";
-import { KreirajKategoriju } from "../../../../tipovi/kategorija";
+import { KreirajKategoriju } from "../../../../tipovi";
 import { FormWrapper, Wrapper } from "../../../utils/ui";
 
 export const KategorijaForma = () => {

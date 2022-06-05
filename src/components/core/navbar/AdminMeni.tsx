@@ -35,7 +35,9 @@ export const AdminMeni = () => {
             </MenuGroup>
             <MenuGroup title={"Kreiraj"}>
               <MenuItem>knjigu</MenuItem>
-              <MenuItem>autora</MenuItem>
+              <MenuItem as={Link} to={"/autor/nov"}>
+                autora
+              </MenuItem>
               <MenuItem as={Link} to={"/kategorija/nova"}>
                 kategoriju
               </MenuItem>
@@ -44,7 +46,14 @@ export const AdminMeni = () => {
               <MenuItem as={Link} to={"/profil"}>
                 Moj profil
               </MenuItem>
-              <MenuItem onClick={odjaviKorisnika}>Odjavi se</MenuItem>
+              <MenuItem
+                onClick={odjaviKorisnika}
+                as={Button}
+                variant="link"
+                color={"blackalpha"}
+              >
+                Odjavi se
+              </MenuItem>
             </MenuGroup>
           </MenuList>
         </>

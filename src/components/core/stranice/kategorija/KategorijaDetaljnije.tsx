@@ -1,10 +1,4 @@
 import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogContent,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogOverlay,
   Box,
   Button,
   Editable,
@@ -24,7 +18,7 @@ import { KorisnikContext } from "../../../../context/KorisnikContext";
 import { useKategorija } from "../../../../hooks/useKategorija";
 import { lowerCamelCaseToDisplay } from "../../../../shared/regex/regex";
 import { UlogaKorisnika } from "../../../../tipovi";
-import { Kategorija } from "../../../../tipovi/kategorija";
+import { Kategorija } from "../../../../tipovi";
 import { Wrapper } from "../../../utils/ui";
 import { FaTrash } from "react-icons/fa";
 import { Dijalog } from "../../../utils/ui/Dijalog";
