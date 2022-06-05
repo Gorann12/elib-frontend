@@ -15,10 +15,11 @@ import {
   Th,
   Thead,
   Tr,
+  useToast,
 } from "@chakra-ui/react";
 import { ChangeEvent, useEffect, useReducer, useState } from "react";
 import { FaBook, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useKategorija } from "../../../../hooks/useKategorija";
 import { useKnjiga } from "../../../../hooks/useKnjiga";
 import {
@@ -75,32 +76,56 @@ export const KnjigeLista = () => {
   const { dajKnjige, dajKnjigePoKategoriji } = useKnjiga();
 
   const navigate = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
-    Promise.all<Kategorija[] | Knjiga[]>([
-      dajSveKategorije(),
-      dajKnjige(state.stranica, state.sortirajPo, state.poredakSortiranja),
-    ])
+    dajSveKategorije()
       .then((res) => {
-        const [preuzeteKategorije, preuzeteKnjige] = res;
+        const preuzeteKategorije = res;
 
-        postaviKategorije(preuzeteKategorije as Kategorija[]);
-        postaviKnjige(preuzeteKnjige as Knjiga[]);
+        postaviKategorije(preuzeteKategorije);
       })
       .catch((e) => navigate("/"))
       .finally(() => postaviUcitavanje(false));
   }, []);
 
   useEffect(() => {
-    // postaviUcitavanje(true);
+    postaviUcitavanje(true);
     const { stranica, sortirajPo, poredakSortiranja, kategorijaId } = state;
-    console.log("kategorija ID", kategorijaId);
+
+    if (!kategorijaId) {
+      dajKnjige(stranica, sortirajPo, poredakSortiranja)
+        .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige))
+        .catch(odgovorNaError)
+        .finally(() => postaviUcitavanje(false));
+    } else {
+      dajKnjigePoKategoriji(
+        kategorijaId,
+        stranica,
+        sortirajPo,
+        poredakSortiranja
+      )
+        .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige.knjige))
+        .catch(odgovorNaError)
+        .finally(() => postaviUcitavanje(false));
+    }
   }, [
     state.stranica,
     state.sortirajPo,
     state.poredakSortiranja,
     state.kategorijaId,
   ]);
+
+  const odgovorNaError = (e: any) => {
+    toast({
+      title: "Eror",
+      description: e.message || "Nesto je poslo po zlu",
+      duration: 5000,
+      isClosable: true,
+      status: "error",
+    });
+    postaviKnjige([]);
+  };
 
   return (
     <Wrapper>
@@ -188,6 +213,8 @@ export const KnjigeLista = () => {
                         leftIcon={<FaBook />}
                         variant="link"
                         colorScheme={"facebook"}
+                        as={Link}
+                        to={`/knjiga/${knjiga.id}`}
                       >
                         {knjiga.naslov}
                       </Button>
