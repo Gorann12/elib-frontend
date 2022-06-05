@@ -1,7 +1,7 @@
 import { Autor } from "./autor";
 import { Kategorija } from "./kategorija";
 
-export interface Knjige {
+export interface Knjiga {
   id: number;
   naslov: string;
   autorId: number;
@@ -15,6 +15,6 @@ export interface Knjige {
   kategorije: Kategorija[];
 }
 
-export type KreirajKnjigu =
-  | Omit<Knjige, "autor" | "kategorije">
-  | { idKategorija: number[] };
+export type KreirajKnjigu = Omit<Knjiga, "autor" | "kategorije"> & {
+  idKategorija: number[];
+};

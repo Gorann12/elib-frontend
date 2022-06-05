@@ -13,9 +13,10 @@ import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useAutor } from "../../../../hooks/useAutor";
 import { useKategorija } from "../../../../hooks/useKategorija";
-import { Autor, Kategorija } from "../../../../tipovi";
+import { Autor, Kategorija, KreirajKnjigu } from "../../../../tipovi";
 import { FormWrapper, Wrapper } from "../../../utils/ui";
 import Select from "react-select";
+import { useKnjiga } from "../../../../hooks/useKnjiga";
 
 export const KnjigeForma = () => {
   const [ucitavanje, postaviUcitavanje] = useState(true);
@@ -23,6 +24,7 @@ export const KnjigeForma = () => {
   const [autori, postaviAutore] = useState<Autor[]>([]);
   const { dajSveKategorije } = useKategorija();
   const { dajSveAutore } = useAutor();
+  const { kreirajKnjigu } = useKnjiga();
   const toast = useToast();
   const {
     handleSubmit,
@@ -30,7 +32,7 @@ export const KnjigeForma = () => {
     reset,
     control,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm<KreirajKnjigu>();
 
   useEffect(() => {
     Promise.all<Kategorija[] | Autor[]>([dajSveKategorije(), dajSveAutore()])
@@ -56,8 +58,31 @@ export const KnjigeForma = () => {
       });
   }, []);
 
-  const kreiraj = (podaci: any) => {
-    console.log(podaci);
+  const kreiraj = async (podaci: KreirajKnjigu) => {
+    try {
+      await kreirajKnjigu(podaci);
+
+      reset();
+      toast({
+        title: "Success",
+        description: `Knjiga ${podaci.naslov} je uspesno kreirana!`,
+        duration: 5000,
+        status: "success",
+        isClosable: true,
+      });
+    } catch (e: any) {
+      const errorPoruka = e.response.data.message;
+
+      toast({
+        title: "Error",
+        description: Array.isArray(errorPoruka)
+          ? errorPoruka.join(", ")
+          : errorPoruka,
+        duration: 5000,
+        status: "error",
+        isClosable: true,
+      });
+    }
   };
 
   return (
@@ -149,6 +174,20 @@ export const KnjigeForma = () => {
               </FormErrorMessage>
             </FormControl>
 
+            <FormControl isInvalid={!!errors.povez}>
+              <FormLabel htmlFor="povez">Povez</FormLabel>
+              <Input
+                id={"povez"}
+                type={"text"}
+                {...register("povez", {
+                  required: "Ovo polje je obavezno",
+                })}
+              />
+              <FormErrorMessage>
+                {errors.povez && errors.povez.message}
+              </FormErrorMessage>
+            </FormControl>
+
             <FormControl isInvalid={!!errors.dimenzije}>
               <FormLabel htmlFor="dimenzije">Dimenzije</FormLabel>
               <Input
@@ -204,6 +243,7 @@ export const KnjigeForma = () => {
                 )}
               />
               <FormErrorMessage>
+                {/* @ts-ignore */}
                 {errors.idKategorija && errors.idKategorija.message}
               </FormErrorMessage>
             </FormControl>
