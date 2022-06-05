@@ -6,10 +6,11 @@ import {
   Input,
   Spinner,
   Text,
+  Select as ChakraSelect,
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useAutor } from "../../../../hooks/useAutor";
 import { useKategorija } from "../../../../hooks/useKategorija";
 import { Autor, Kategorija } from "../../../../tipovi";
@@ -27,6 +28,7 @@ export const KnjigeForma = () => {
     handleSubmit,
     register,
     reset,
+    control,
     formState: { errors, isSubmitting },
   } = useForm();
 
@@ -80,16 +82,20 @@ export const KnjigeForma = () => {
 
             <FormControl isInvalid={!!errors.autorId}>
               <FormLabel htmlFor="autorId">Autor</FormLabel>
-              {/* <Select
+              <ChakraSelect
+                placeholder="Izaberite autora"
+                id="authorId"
                 {...register("autorId", {
                   required: "Obavezno polje",
                   valueAsNumber: true,
                 })}
-                options={autori.map((autor) => ({
-                  value: autor.id,
-                  label: autor.ime,
-                }))}
-              /> */}
+              >
+                {autori.map((autor) => (
+                  <option key={autor.id} value={autor.id}>
+                    {autor.ime}
+                  </option>
+                ))}
+              </ChakraSelect>
               <FormErrorMessage>
                 {errors.autorId && errors.autorId.message}
               </FormErrorMessage>
