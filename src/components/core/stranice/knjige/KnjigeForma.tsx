@@ -185,21 +185,20 @@ export const KnjigeForma = () => {
 
             <FormControl isInvalid={!!errors.idKategorija}>
               <FormLabel htmlFor="idKategorija">Kategorije</FormLabel>
-              <select
-                {...register("idKategorija", {
-                  required: "Obavezno polje",
-                  valueAsNumber: true,
-                })}
-              >
-                <option value="" disabled={true}>
-                  Izaberi kategoriju
-                </option>
-                {kategorije.map((kategorija) => (
-                  <option key={kategorija.id} value={kategorija.id}>
-                    {kategorija.naziv}
-                  </option>
-                ))}
-              </select>
+              <Controller
+                control={control}
+                name="idKategorija"
+                render={({ field: { onChange } }) => (
+                  <Select
+                    onChange={(val) => onChange(val.map((c) => c.value))}
+                    options={kategorije.map((kategorija) => ({
+                      value: kategorija.id,
+                      label: kategorija.naziv,
+                    }))}
+                    isMulti
+                  />
+                )}
+              />
               <FormErrorMessage>
                 {errors.idKategorija && errors.idKategorija.message}
               </FormErrorMessage>
