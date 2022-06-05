@@ -47,7 +47,7 @@ const initialState: ReducerState = {
   stranica: parseInt(localStorage.getItem("stranica") || "0"),
   sortirajPo: (localStorage.getItem("sortirajPo") as SortiranjePo) || "cena",
   poredakSortiranja:
-    (localStorage.getItem("poredakSortirnja") as PoredakSortiranja) || "asc",
+    (localStorage.getItem("poredakSortiranja") as PoredakSortiranja) || "asc",
   kategorijaId: parseInt(localStorage.getItem("kategorijaId") || "") || null,
 };
 
@@ -66,6 +66,8 @@ const reducer = (state: ReducerState, action: ReducerActions) => {
   }
 };
 
+const ucitavanje_queue: number[] = [];
+
 export const KnjigeLista = () => {
   const [kategorije, postaviKategorije] = useState<Kategorija[]>([]);
   const [knjige, postaviKnjige] = useState<Knjiga[]>([]);
@@ -78,26 +80,57 @@ export const KnjigeLista = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  useEffect(() => {
-    dajSveKategorije()
-      .then((res) => {
-        const preuzeteKategorije = res;
+  // useEffect(() => {
+  // dajSveKategorije()
+  //   .then((res) => {
+  //     const preuzeteKategorije = res;
 
-        postaviKategorije(preuzeteKategorije);
-      })
-      .catch((e) => navigate("/"))
-      .finally(() => postaviUcitavanje(false));
-  }, []);
+  //     postaviKategorije(preuzeteKategorije);
+  //   })
+  //   .catch((e) => navigate("/"))
+  //   .finally(() => postaviUcitavanje(false));
+  // }, []);
+
+  const postaviLocalStorage = () => {
+    const { stranica, sortirajPo, poredakSortiranja, kategorijaId } = state;
+
+    localStorage.setItem("stranica", stranica + "");
+    localStorage.setItem("sortirajPo", sortirajPo);
+    localStorage.setItem("poredakSortiranja", poredakSortiranja);
+    localStorage.setItem("kategorijaId", kategorijaId + "");
+  };
 
   useEffect(() => {
     postaviUcitavanje(true);
+    ucitavanje_queue.push(1);
+
     const { stranica, sortirajPo, poredakSortiranja, kategorijaId } = state;
+    postaviLocalStorage();
+    if (!kategorije.length) {
+      ucitavanje_queue.push(2);
+      dajSveKategorije()
+        .then((res) => {
+          const preuzeteKategorije = res;
+
+          postaviKategorije(preuzeteKategorije);
+        })
+        .catch((e) => navigate("/"))
+        .finally(() => {
+          ucitavanje_queue.pop();
+
+          if (!ucitavanje_queue.length) postaviUcitavanje(false);
+        });
+    }
 
     if (!kategorijaId) {
       dajKnjige(stranica, sortirajPo, poredakSortiranja)
         .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige))
         .catch(odgovorNaError)
-        .finally(() => postaviUcitavanje(false));
+        .finally(() => {
+          ucitavanje_queue.pop();
+
+          if (!ucitavanje_queue.length) postaviUcitavanje(false);
+        });
     } else {
       dajKnjigePoKategoriji(
         kategorijaId,
@@ -107,7 +140,11 @@ export const KnjigeLista = () => {
       )
         .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige.knjige))
         .catch(odgovorNaError)
-        .finally(() => postaviUcitavanje(false));
+        .finally(() => {
+          ucitavanje_queue.pop();
+
+          if (!ucitavanje_queue.length) postaviUcitavanje(false);
+        });
     }
   }, [
     state.stranica,
@@ -151,6 +188,7 @@ export const KnjigeLista = () => {
                       : parseInt(e.target.value),
                   })
                 }
+                value={state.kategorijaId || ""}
               >
                 {kategorije.map((kategorija) => (
                   <option key={kategorija.id} value={kategorija.id}>
@@ -169,10 +207,9 @@ export const KnjigeLista = () => {
                     payload: e.target.value as SortiranjePo,
                   })
                 }
+                value={state.sortirajPo}
               >
-                <option value="cena" defaultChecked={true}>
-                  Ceni
-                </option>
+                <option value="cena">Ceni</option>
                 <option value="naslov">Naslovu</option>
               </Select>
             </FormControl>
@@ -186,10 +223,9 @@ export const KnjigeLista = () => {
                     payload: e.target.value as PoredakSortiranja,
                   })
                 }
+                value={state.poredakSortiranja}
               >
-                <option value="asc" defaultChecked={true}>
-                  Rastuce
-                </option>
+                <option value="asc">Rastuce</option>
                 <option value="desc">Opadajuce</option>
               </Select>
             </FormControl>
@@ -202,7 +238,7 @@ export const KnjigeLista = () => {
                   <Th>Naslov</Th>
                   <Th>Kategorije</Th>
                   <Th isNumeric>Cena</Th>
-                  <Th isNumeric>Broj Strana</Th>
+                  <Th>Broj Strana</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -227,7 +263,7 @@ export const KnjigeLista = () => {
                     <Td isNumeric fontWeight={"bold"}>
                       {knjiga.cena} RSD
                     </Td>
-                    <Td isNumeric>{knjiga.brojStrana}</Td>
+                    <Td>{knjiga.brojStrana}</Td>
                   </Tr>
                 ))}
               </Tbody>
