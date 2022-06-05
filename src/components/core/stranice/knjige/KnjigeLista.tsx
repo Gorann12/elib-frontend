@@ -40,7 +40,7 @@ type ReducerActions =
   | { type: "inkrementuj" | "dekrementuj" }
   | { type: "sortirajPo"; payload: SortiranjePo }
   | { type: "poredakSortiranja"; payload: PoredakSortiranja }
-  | { type: "kategorija"; payload: number };
+  | { type: "kategorija"; payload: number | null };
 
 const initialState: ReducerState = {
   stranica: parseInt(localStorage.getItem("stranica") || "0"),
@@ -91,21 +91,16 @@ export const KnjigeLista = () => {
       .finally(() => postaviUcitavanje(false));
   }, []);
 
-  useEffect(() => {}, []);
-
-  // const promeniPoredakSortiranja = (vrednost: PoredakSortiranja) => {
-  //   dispatch({ type: "poredakSortiranja", payload: vrednost })
-  // };
-
-  // const promeniSortiranjePo = (vrednost: SortiranjePo) => {
-  //   dispatch({ type: "sortirajPo", payload: vrednost});
-  // };
-
-  // const promeniKategoriju = (vrednost: number) => {
-  //   dispatch({ type })
-  // };
-
-  // const promeniStranicu = (dodaj: number) => {};
+  useEffect(() => {
+    // postaviUcitavanje(true);
+    const { stranica, sortirajPo, poredakSortiranja, kategorijaId } = state;
+    console.log("kategorija ID", kategorijaId);
+  }, [
+    state.stranica,
+    state.sortirajPo,
+    state.poredakSortiranja,
+    state.kategorijaId,
+  ]);
 
   return (
     <Wrapper>
@@ -126,7 +121,9 @@ export const KnjigeLista = () => {
                 onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                   dispatch({
                     type: "kategorija",
-                    payload: parseInt(e.target.value),
+                    payload: Number.isNaN(parseInt(e.target.value))
+                      ? null
+                      : parseInt(e.target.value),
                   })
                 }
               >
