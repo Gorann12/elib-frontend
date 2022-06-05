@@ -81,11 +81,22 @@ export const useKnjiga = () => {
     return data;
   };
 
+  const izbrisiKnjigu: (id: number) => Promise<Knjiga> = async (id) => {
+    const { data } = await axios.delete<Knjiga>(`/knjiga/${id}`, {
+      headers: {
+        Authorization: `Bearer ${dajToken()}`,
+      },
+    });
+
+    return data;
+  };
+
   return {
     kreirajKnjigu,
     azurirajKnjigu,
     dajKnjige,
     dajKnjigePoKategoriji,
     dajKnjigu,
+    izbrisiKnjigu,
   };
 };
