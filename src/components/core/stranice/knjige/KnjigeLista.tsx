@@ -16,7 +16,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useReducer, useState } from "react";
 import { FaBook, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useKategorija } from "../../../../hooks/useKategorija";
@@ -36,21 +36,30 @@ interface ReducerState {
   kategorijaId: number | null;
 }
 
-type ReducerActions = "inkrementuj" | "dekrementuj";
+type ReducerActions = { type: "inkrementuj" | "dekrementuj" };
 
 const initialState: ReducerState = {
-  stranica: 0,
-  sortirajPo: "cena",
-  poredakSortiranja: "asc",
-  kategorijaId: null,
+  stranica: parseInt(localStorage.getItem("stranica") || "0"),
+  sortirajPo: (localStorage.getItem("sortirajPo") as SortiranjePo) || "cena",
+  poredakSortiranja:
+    (localStorage.getItem("poredakSortirnja") as PoredakSortiranja) || "asc",
+  kategorijaId: parseInt(localStorage.getItem("kategorijaId") || "") || null,
 };
 
-const reducer = (state: ReducerState, action: ReducerActions) => {};
+const reducer = (state: ReducerState, action: ReducerActions) => {
+  switch (action.type) {
+    case "inkrementuj":
+      return { ...state, stranica: state.stranica + 1 };
+    case "dekrementuj":
+      return { ...state, stranica: state.stranica - 1 };
+  }
+};
 
 export const KnjigeLista = () => {
   const [kategorije, postaviKategorije] = useState<Kategorija[]>([]);
   const [knjige, postaviKnjige] = useState<Knjiga[]>([]);
   const [ucitavanje, postaviUcitavanje] = useState(true);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const { dajSveKategorije } = useKategorija();
   const { dajKnjige, dajKnjigePoKategoriji } = useKnjiga();
@@ -58,7 +67,10 @@ export const KnjigeLista = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    Promise.all<Kategorija[] | Knjiga[]>([dajSveKategorije(), dajKnjige()])
+    Promise.all<Kategorija[] | Knjiga[]>([
+      dajSveKategorije(),
+      dajKnjige(state.stranica, state.sortirajPo, state.poredakSortiranja),
+    ])
       .then((res) => {
         const [preuzeteKategorije, preuzeteKnjige] = res;
 
