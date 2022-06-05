@@ -51,6 +51,7 @@ export const KategorijaLista = () => {
                       as={Link}
                       to={`/kategorija/${kategorija.id}`}
                       colorScheme={"teal"}
+                      state={kategorija}
                     >
                       {kategorija.naziv}
                     </Button>

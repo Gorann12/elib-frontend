@@ -24,5 +24,11 @@ export const useKategorija = () => {
     return data;
   };
 
-  return { kreiraj, dajSveKategorije };
+  const dajKategoriju: (id: number) => Promise<Kategorija> = async (id) => {
+    const { data } = await axios.get<Kategorija>(`/kategorija/${id}`);
+
+    return data;
+  };
+
+  return { kreiraj, dajSveKategorije, dajKategoriju };
 };
