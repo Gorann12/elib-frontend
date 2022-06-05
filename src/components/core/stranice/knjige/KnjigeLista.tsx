@@ -1,10 +1,14 @@
 import {
+  Button,
+  ButtonGroup,
   FormControl,
   FormLabel,
   HStack,
+  IconButton,
   Select,
   Spinner,
   Table,
+  TableCaption,
   TableContainer,
   Tbody,
   Td,
@@ -13,6 +17,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import { ChangeEvent, useEffect, useState } from "react";
+import { FaBook, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useKategorija } from "../../../../hooks/useKategorija";
 import { useKnjiga } from "../../../../hooks/useKnjiga";
@@ -24,11 +29,28 @@ import {
 } from "../../../../tipovi";
 import { Wrapper } from "../../../utils/ui";
 
+interface ReducerState {
+  stranica: number;
+  sortirajPo: SortiranjePo;
+  poredakSortiranja: PoredakSortiranja;
+  kategorijaId: number | null;
+}
+
+type ReducerActions = "inkrementuj" | "dekrementuj";
+
+const initialState: ReducerState = {
+  stranica: 0,
+  sortirajPo: "cena",
+  poredakSortiranja: "asc",
+  kategorijaId: null,
+};
+
+const reducer = (state: ReducerState, action: ReducerActions) => {};
+
 export const KnjigeLista = () => {
   const [kategorije, postaviKategorije] = useState<Kategorija[]>([]);
   const [knjige, postaviKnjige] = useState<Knjiga[]>([]);
   const [ucitavanje, postaviUcitavanje] = useState(true);
-  const [stranica, postaviStranicu] = useState(0);
 
   const { dajSveKategorije } = useKategorija();
   const { dajKnjige, dajKnjigePoKategoriji } = useKnjiga();
@@ -37,22 +59,25 @@ export const KnjigeLista = () => {
 
   useEffect(() => {
     Promise.all<Kategorija[] | Knjiga[]>([dajSveKategorije(), dajKnjige()])
-      .then((res) => {})
+      .then((res) => {
+        const [preuzeteKategorije, preuzeteKnjige] = res;
+
+        postaviKategorije(preuzeteKategorije as Kategorija[]);
+        postaviKnjige(preuzeteKnjige as Knjiga[]);
+      })
       .catch((e) => navigate("/"))
       .finally(() => postaviUcitavanje(false));
-    // dajSveKategorije()
-    //   .then((preuzeteKategorije) => {
-    //     postaviKategorije(preuzeteKategorije);
-    //   })
-    //   .catch((e) => navigate("/"))
-    //   .finally(() => postaviUcitavanje(false));
   }, []);
 
-  const promeniPoredakSortiranja = (vrednost: PoredakSortiranja) => {};
+  const promeniPoredakSortiranja = (vrednost: PoredakSortiranja) => {
+    postaviUcitavanje(true);
+  };
 
   const promeniSortiranjePo = (vrednost: SortiranjePo) => {};
 
   const promeniKategoriju = (vrednost: number) => {};
+
+  const promeniStranicu = (dodaj: number) => {};
 
   return (
     <Wrapper>
@@ -111,23 +136,56 @@ export const KnjigeLista = () => {
             </FormControl>
           </HStack>
           <TableContainer>
-            <Table variant="simple">
+            <Table variant="simple" mt={10}>
+              {/* <TableCaption>Stranica: {stranica}</TableCaption> */}
               <Thead>
                 <Tr>
-                  <Th>To convert</Th>
-                  <Th>into</Th>
-                  <Th isNumeric>multiply by</Th>
+                  <Th>Naslov</Th>
+                  <Th>Kategorije</Th>
+                  <Th isNumeric>Cena</Th>
+                  <Th isNumeric>Broj Strana</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                <Tr>
-                  <Td>inches</Td>
-                  <Td>millimetres (mm)</Td>
-                  <Td isNumeric>25.4</Td>
-                </Tr>
+                {knjige.map((knjiga) => (
+                  <Tr key={knjiga.id}>
+                    <Td>
+                      <Button
+                        leftIcon={<FaBook />}
+                        variant="link"
+                        colorScheme={"facebook"}
+                      >
+                        {knjiga.naslov}
+                      </Button>
+                    </Td>
+                    <Td>
+                      {knjiga.kategorije
+                        .map((kategorija) => kategorija.naziv)
+                        .join(", ")}
+                    </Td>
+                    <Td isNumeric fontWeight={"bold"}>
+                      {knjiga.cena} RSD
+                    </Td>
+                    <Td isNumeric>{knjiga.brojStrana}</Td>
+                  </Tr>
+                ))}
               </Tbody>
             </Table>
           </TableContainer>
+          <HStack justify={"right"} mt={7}>
+            <IconButton
+              aria-label="Prethodna stranica"
+              icon={<FaChevronLeft />}
+              // isDisabled={stranica === 0}
+              onClick={() => promeniStranicu(-1)}
+            />
+            <IconButton
+              aria-label="Sledeca stranica"
+              icon={<FaChevronRight />}
+              isDisabled={knjige.length < 5}
+              onClick={() => promeniStranicu(1)}
+            />
+          </HStack>
         </>
       ) : (
         <Spinner position="absolute" top="50vh" left="50vh" />
