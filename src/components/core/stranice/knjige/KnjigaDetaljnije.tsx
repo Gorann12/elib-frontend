@@ -12,7 +12,7 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import { useContext, useEffect, useState } from "react";
-import { FaArchive } from "react-icons/fa";
+import { FaArchive, FaChevronLeft } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { KorisnikContext } from "../../../../context/KorisnikContext";
 import { useKnjiga } from "../../../../hooks/useKnjiga";
@@ -81,7 +81,15 @@ export const KnjigaDetaljnije = () => {
     <Wrapper>
       {!ucitavanje ? (
         <>
-          <HStack align="center" mt={"3rem"}>
+          <Button
+            leftIcon={<FaChevronLeft />}
+            onClick={() => navigate("/knjiga/lista", { replace: true })}
+            variant="link"
+            mt={"3rem"}
+          >
+            Nazad na listu
+          </Button>
+          <HStack align="center" mt={".5rem"}>
             {knjiga?.kategorije.map((kategorija, index) => (
               <Tag
                 size={"sm"}
