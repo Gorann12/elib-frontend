@@ -41,7 +41,8 @@ type ReducerActions =
   | { type: "inkrementuj" | "dekrementuj" }
   | { type: "sortirajPo"; payload: SortiranjePo }
   | { type: "poredakSortiranja"; payload: PoredakSortiranja }
-  | { type: "kategorija"; payload: number | null };
+  | { type: "kategorija"; payload: number | null }
+  | { type: "promeniStranicu"; payload: number };
 
 const initialState: ReducerState = {
   stranica: parseInt(localStorage.getItem("stranica") || "0"),
@@ -63,6 +64,8 @@ const reducer = (state: ReducerState, action: ReducerActions) => {
       return { ...state, poredakSortiranja: action.payload };
     case "kategorija":
       return { ...state, kategorijaId: action.payload };
+    case "promeniStranicu":
+      return { ...state, stranica: action.payload };
   }
 };
 
@@ -80,16 +83,9 @@ export const KnjigeLista = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  // useEffect(() => {
-  // dajSveKategorije()
-  //   .then((res) => {
-  //     const preuzeteKategorije = res;
-
-  //     postaviKategorije(preuzeteKategorije);
-  //   })
-  //   .catch((e) => navigate("/"))
-  //   .finally(() => postaviUcitavanje(false));
-  // }, []);
+  useEffect(() => {
+    dispatch({ type: "promeniStranicu", payload: 0 });
+  }, [state.kategorijaId]);
 
   const postaviLocalStorage = () => {
     const { stranica, sortirajPo, poredakSortiranja, kategorijaId } = state;
@@ -238,7 +234,8 @@ export const KnjigeLista = () => {
                   <Th>Naslov</Th>
                   <Th>Kategorije</Th>
                   <Th isNumeric>Cena</Th>
-                  <Th>Broj Strana</Th>
+                  <Th>Pisac</Th>
+                  <Th isNumeric>Broj Strana</Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -263,7 +260,8 @@ export const KnjigeLista = () => {
                     <Td isNumeric fontWeight={"bold"}>
                       {knjiga.cena} RSD
                     </Td>
-                    <Td>{knjiga.brojStrana}</Td>
+                    <Td>{knjiga.autor.ime}</Td>
+                    <Td isNumeric>{knjiga.brojStrana}</Td>
                   </Tr>
                 ))}
               </Tbody>
