@@ -77,10 +77,12 @@ export const KategorijaDetaljnije = () => {
   const handleSubmit = async (key: keyof typeof podaci, vrednost: string) => {
     try {
       if (id) {
-        await izmeniKategoriju(parseInt(id), {
+        const novaKategorija = await izmeniKategoriju(parseInt(id), {
           ...kategorija,
           [key]: vrednost,
         });
+
+        postaviKategoriju(novaKategorija);
       }
     } catch (e: any) {
       const errorPoruka = e.response.data.message;
