@@ -26,11 +26,18 @@ export const AdminMeni = () => {
             Opcije
           </MenuButton>
           <MenuList>
-            <MenuGroup title={"Upravljaj"}>
-              <MenuItem>Kreiraj knjigu</MenuItem>
-              <MenuItem>Kreiraj autora</MenuItem>
+            <MenuGroup title={"Izlistaj"}>
+              <MenuItem>knjige</MenuItem>
+              <MenuItem>autore</MenuItem>
+              <MenuItem as={Link} to={"/kategorija/lista"}>
+                kategorije
+              </MenuItem>
+            </MenuGroup>
+            <MenuGroup title={"Kreiraj"}>
+              <MenuItem>knjigu</MenuItem>
+              <MenuItem>autora</MenuItem>
               <MenuItem as={Link} to={"/kategorija/nova"}>
-                Kreiraj kategoriju
+                kategoriju
               </MenuItem>
             </MenuGroup>
             <MenuGroup title={"Profil"}>

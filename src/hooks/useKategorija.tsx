@@ -18,5 +18,11 @@ export const useKategorija = () => {
     return data;
   };
 
-  return { kreiraj };
+  const dajSveKategorije: () => Promise<Kategorija[]> = async () => {
+    const { data } = await axios.get<Kategorija[]>("/kategorija");
+
+    return data;
+  };
+
+  return { kreiraj, dajSveKategorije };
 };

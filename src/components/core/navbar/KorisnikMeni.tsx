@@ -36,6 +36,9 @@ const KorisnikMobilniMeni = () => {
               <MenuItem as={Link} to={"/knjige"}>
                 Knjige
               </MenuItem>
+              <MenuItem as={Link} to={"/kategorija/lista"}>
+                Kategorije
+              </MenuItem>
               <MenuItem as={Link} to={"/istorija-kupovine"}>
                 Istorija kupovine
               </MenuItem>
@@ -67,6 +70,14 @@ const KorisnikDesktopMeni = () => {
         to="/istorija-kupovine"
       >
         Istorija kupovine
+      </Button>
+      <Button
+        colorScheme={"teal"}
+        variant={"link"}
+        as={Link}
+        to="/kategorija/lista"
+      >
+        Kategorije
       </Button>
       <Button colorScheme={"teal"} variant={"link"} onClick={odjaviKorisnika}>
         Odjavi se

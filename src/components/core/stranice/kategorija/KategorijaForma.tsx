@@ -86,6 +86,7 @@ export const KategorijaForma = () => {
                     message: "maksimalna duzina je 1024 karaktera",
                   },
                 })}
+                maxLength={1024}
               />
               <FormErrorMessage>
                 {errors.opis && errors.opis.message}

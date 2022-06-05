@@ -13,6 +13,7 @@ import {
 } from "./components/utils/GuardedRoute";
 import { UlogaKorisnika } from "./tipovi";
 import { KategorijaForma } from "./components/core/stranice/kategorija/KategorijaForma";
+import { KategorijaLista } from "./components/core/stranice/kategorija/KategorijaLista";
 
 export const App = () => {
   const { inicijalnoUcitavanje } = useContext(KorisnikContext);
@@ -57,6 +58,8 @@ export const App = () => {
                 </UlogaGuard>
               }
             />
+            <Route path="/kategorija/lista" element={<KategorijaLista />} />
+            <Route path="/kategorija/:id" element={<KategorijaLista />} />
           </Routes>
         </Router>
       )}
