@@ -49,7 +49,7 @@ export const KnjigaDetaljnije = () => {
         )
         .finally(() => postaviUcitavanje(false));
     }
-  });
+  }, []);
 
   const izbrisi = () => {
     if (id) {
@@ -57,10 +57,11 @@ export const KnjigaDetaljnije = () => {
       postaviUcitavanje(true);
 
       izbrisiKnjigu(parseInt(id))
-        .then(() => navigate("/autor/lista"))
+        .then(() => navigate("/knjiga/lista"))
         .catch((e: any) => {
           const errorPoruka = e.response.data.message;
 
+          console.log(e);
           postaviUcitavanje(false);
           onClose();
           toast({
