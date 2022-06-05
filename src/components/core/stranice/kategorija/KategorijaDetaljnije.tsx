@@ -138,7 +138,6 @@ export const KategorijaDetaljnije = () => {
                           handleSubmit(key as keyof typeof podaci, vrednost)
                         }
                         isDisabled={
-                          ["naziv"].includes(key) ||
                           daLiKorisnikImaUlogu(UlogaKorisnika.KORISNIK) ||
                           daLiJeGost()
                         }
