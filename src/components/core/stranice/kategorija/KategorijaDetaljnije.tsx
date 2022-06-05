@@ -18,7 +18,7 @@ import {
   useToast,
   VStack,
 } from "@chakra-ui/react";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { KorisnikContext } from "../../../../context/KorisnikContext";
 import { useKategorija } from "../../../../hooks/useKategorija";
@@ -27,14 +27,15 @@ import { UlogaKorisnika } from "../../../../tipovi";
 import { Kategorija } from "../../../../tipovi/kategorija";
 import { Wrapper } from "../../../utils/ui";
 import { FaTrash } from "react-icons/fa";
+import { Dijalog } from "../../../utils/ui/Dijalog";
 
 export const KategorijaDetaljnije = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const cancelRef = useRef(null);
-
   const { state } = useLocation();
   const { id } = useParams();
+
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const { dajKategoriju, izmeniKategoriju, izbrisiKategoriju } =
     useKategorija();
   const { daLiKorisnikImaUlogu, daLiJeGost } = useContext(KorisnikContext);
@@ -56,11 +57,16 @@ export const KategorijaDetaljnije = () => {
 
   const izbrisi = () => {
     if (id) {
+      onClose();
+      postaviUcitavanje(true);
+
       izbrisiKategoriju(parseInt(id))
         .then(() => navigate("/kategorija/lista"))
         .catch((e: any) => {
           const errorPoruka = e.response.data.message;
 
+          postaviUcitavanje(false);
+          onClose();
           toast({
             title: "Error",
             description: Array.isArray(errorPoruka)
@@ -154,6 +160,7 @@ export const KategorijaDetaljnije = () => {
       ) : (
         <Spinner position="absolute" top="50vh" left="50vw" />
       )}
+      <Dijalog isOpen={isOpen} onClose={onClose} onConfirmation={izbrisi} />
     </Wrapper>
   );
 };
