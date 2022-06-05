@@ -56,7 +56,7 @@ export const Autocomplete = () => {
 
   return (
     <Flex
-      maxW={"25rem"}
+      maxW={"20rem"}
       w={"100%"}
       position={"relative"}
       onBlur={skloniSugestije}

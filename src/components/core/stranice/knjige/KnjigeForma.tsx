@@ -27,10 +27,10 @@ export const KnjigeForma = () => {
   const { kreirajKnjigu } = useKnjiga();
   const toast = useToast();
   const {
+    control,
     handleSubmit,
     register,
     reset,
-    control,
     formState: { errors, isSubmitting },
   } = useForm<KreirajKnjigu>();
 

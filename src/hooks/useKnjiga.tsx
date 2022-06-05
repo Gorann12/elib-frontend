@@ -31,5 +31,49 @@ export const useKnjiga = () => {
     return data;
   };
 
-  return { kreirajKnjigu, azurirajKnjigu };
+  const dajKnjige: (
+    stranica: number,
+    sortirajPo: "naslov" | "cena",
+    smerSortiranja: "asc" | "desc"
+  ) => Promise<Knjiga[]> = async (
+    stranica = 0,
+    sortirajPo = "cena",
+    smerSortiranja = "asc"
+  ) => {
+    const { data } = await axios.get<Knjiga[]>(`/knjiga`, {
+      params: {
+        stranica: stranica + "",
+        sortirajPo,
+        smerSortiranja,
+        limit: "5",
+      },
+    });
+
+    return data;
+  };
+
+  const dajKnjigePoKategoriji: (
+    stranica: number,
+    idKategorije: number,
+    sortirajPo: "naslov" | "cena",
+    smerSortiranja: "asc" | "desc"
+  ) => Promise<{ brojKnjiga: number; knjige: Knjiga[] }> = async (
+    idKategorije,
+    stranica = 0,
+    sortirajPo = "cena",
+    smerSortiranja = "asc"
+  ) => {
+    const { data } = await axios.get(`/kategorija/${idKategorije}/knjiga`, {
+      params: {
+        stranica: stranica + "",
+        limit: "5",
+        sortirajPo,
+        smerSortiranja,
+      },
+    });
+
+    return data;
+  };
+
+  return { kreirajKnjigu, azurirajKnjigu, dajKnjige, dajKnjigePoKategoriji };
 };

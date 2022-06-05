@@ -15,6 +15,6 @@ export interface Knjiga {
   kategorije: Kategorija[];
 }
 
-export type KreirajKnjigu = Omit<Knjiga, "autor" | "kategorije"> & {
+export type KreirajKnjigu = Omit<Knjiga, "autor" | "kategorije" | "id"> & {
   idKategorija: number[];
 };
