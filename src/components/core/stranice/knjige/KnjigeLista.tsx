@@ -89,6 +89,10 @@ const reducer = (state: ReducerState, action: ReducerActions) => {
   }
 };
 
+const parsirajQueryParametre = (obj: { [key: string]: any }) => {
+  return Object.keys(obj).filter((kljuc) => obj[kljuc]);
+};
+
 export const KnjigeLista = () => {
   const [kategorije, postaviKategorije] = useState<Kategorija[]>([]);
   const [knjige, postaviKnjige] = useState<Knjiga[]>([]);
@@ -124,10 +128,13 @@ export const KnjigeLista = () => {
     Promise.all<Knjiga[] | Kategorija[]>([
       dajKnjige(filter),
       dajSveKategorije(),
-    ]).then((rezultat) => {
-      console.log("REZULTAT", rezultat);
-      postaviUcitavanje(false);
-    });
+    ])
+      .then((rezultat) => {
+        postaviKnjige(rezultat[0] as Knjiga[]);
+        postaviKategorije(rezultat[1] as Kategorija[]);
+      })
+      .catch(odgovorNaError)
+      .finally(() => postaviUcitavanje(false));
   }, []);
 
   const odgovorNaError = (e: any) => {
@@ -138,7 +145,7 @@ export const KnjigeLista = () => {
       isClosable: true,
       status: "error",
     });
-    // postaviKnjige([]);
+    postaviKnjige([]);
   };
 
   return (
