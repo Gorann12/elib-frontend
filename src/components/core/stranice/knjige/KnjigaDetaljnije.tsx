@@ -120,7 +120,9 @@ export const KnjigaDetaljnije = () => {
               </VStack>
             ))}
             {daLiKorisnikImaUlogu(UlogaKorisnika.KORISNIK) && (
-              <Button colorScheme={"messenger"}>Dodaj u korpu</Button>
+              <Button colorScheme={"messenger"} w={"fit-content"}>
+                Dodaj u korpu
+              </Button>
             )}
             {daLiKorisnikImaUlogu(UlogaKorisnika.ADMIN) && (
               <HStack>

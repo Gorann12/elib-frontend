@@ -50,7 +50,7 @@ export const KategorijaLista = () => {
                       variant={"link"}
                       as={Link}
                       to={`/kategorija/${kategorija.id}`}
-                      colorScheme={"teal"}
+                      colorScheme={"facebook"}
                       state={kategorija}
                     >
                       {kategorija.naziv}

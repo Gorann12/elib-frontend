@@ -28,8 +28,14 @@ const GostMobilniMeni = () => {
           <MenuItem as={Link} to={"/registracija"}>
             Registracija
           </MenuItem>
-          <MenuItem as={Link} to={"/knjige"}>
+          <MenuItem as={Link} to={"/knjiga/lista"}>
             Knjige
+          </MenuItem>
+          <MenuItem as={Link} to={"/autor/lista"}>
+            Autori
+          </MenuItem>
+          <MenuItem as={Link} to={"/kategorija/lista"}>
+            Kategorije
           </MenuItem>
         </MenuList>
       </Menu>
@@ -40,8 +46,24 @@ const GostMobilniMeni = () => {
 const GostDesktopMeni = () => {
   return (
     <HStack spacing={"1rem"} display={{ base: "none", md: "block" }}>
-      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/knjige">
+      <Button
+        colorScheme={"teal"}
+        variant={"link"}
+        as={Link}
+        to="/knjiga/lista"
+      >
         Knjige
+      </Button>
+      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/autor/lista">
+        Autori
+      </Button>
+      <Button
+        colorScheme={"teal"}
+        variant={"link"}
+        as={Link}
+        to="/kategorija/lista"
+      >
+        Kategoije
       </Button>
       <Button colorScheme={"teal"} variant={"link"} as={Link} to="/prijava">
         Prijava

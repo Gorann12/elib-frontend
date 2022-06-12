@@ -67,7 +67,7 @@ export const AutorLista = () => {
                       variant={"link"}
                       as={Link}
                       to={`/autor/${autor.id}`}
-                      colorScheme={"teal"}
+                      colorScheme={"facebook"}
                       state={autor}
                     >
                       {autor.ime}

@@ -44,11 +44,9 @@ interface ReducerState {
 }
 
 type ReducerActions =
-  | { type: "inkrementuj" | "dekrementuj" }
   | { type: "sortirajPo"; payload: SortiranjePo }
   | { type: "poredakSortiranja"; payload: PoredakSortiranja }
-  | { type: "kategorija"; payload: number | null }
-  | { type: "promeniStranicu"; payload: number };
+  | { type: "kategorija"; payload: number | null };
 
 const initialState: ReducerState = {
   stranica: 0,
@@ -59,22 +57,14 @@ const initialState: ReducerState = {
 
 const reducer = (state: ReducerState, action: ReducerActions) => {
   switch (action.type) {
-    case "inkrementuj":
-      return { ...state, stranica: state.stranica + 1 };
-    case "dekrementuj":
-      return { ...state, stranica: state.stranica - 1 };
     case "sortirajPo":
       return { ...state, sortirajPo: action.payload };
     case "poredakSortiranja":
       return { ...state, poredakSortiranja: action.payload };
     case "kategorija":
       return { ...state, kategorijaId: action.payload, stranica: 0 };
-    case "promeniStranicu":
-      return { ...state, stranica: action.payload };
   }
 };
-
-const ucitavanje_queue: number[] = [];
 
 export const KnjigeLista = () => {
   const [kategorije, postaviKategorije] = useState<Kategorija[]>([]);
@@ -87,63 +77,55 @@ export const KnjigeLista = () => {
   );
 
   const { dajSveKategorije } = useKategorija();
-  const { dajKnjige, dajKnjigePoKategoriji } = useKnjiga();
+  const { dajKnjige } = useKnjiga();
 
   const navigate = useNavigate();
   const toast = useToast();
 
   useEffect(() => {
     postaviUcitavanje(true);
-    ucitavanje_queue.push(1);
 
     const { stranica, sortirajPo, poredakSortiranja, kategorijaId } = state;
+    // if (!kategorije.length) {
+    //   dajSveKategorije()
+    //     .then((res) => {
+    //       const preuzeteKategorije = res;
 
-    if (!kategorije.length) {
-      ucitavanje_queue.push(2);
-      dajSveKategorije()
-        .then((res) => {
-          const preuzeteKategorije = res;
+    //       postaviKategorije(preuzeteKategorije);
+    //     })
+    //     .catch((e) => navigate("/"))
+    //     .finally(() => {
+    //       ucitavanje_queue.pop();
 
-          postaviKategorije(preuzeteKategorije);
-        })
-        .catch((e) => navigate("/"))
-        .finally(() => {
-          ucitavanje_queue.pop();
+    //       if (!ucitavanje_queue.length) postaviUcitavanje(false);
+    //     });
+    // }
 
-          if (!ucitavanje_queue.length) postaviUcitavanje(false);
-        });
-    }
+    // if (!kategorijaId) {
+    //   dajKnjige(stranica, sortirajPo, poredakSortiranja)
+    //     .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige))
+    //     .catch(odgovorNaError)
+    //     .finally(() => {
+    //       ucitavanje_queue.pop();
 
-    if (!kategorijaId) {
-      dajKnjige(stranica, sortirajPo, poredakSortiranja)
-        .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige))
-        .catch(odgovorNaError)
-        .finally(() => {
-          ucitavanje_queue.pop();
+    //       if (!ucitavanje_queue.length) postaviUcitavanje(false);
+    //     });
+    // } else {
+    //   dajKnjigePoKategoriji(
+    //     kategorijaId,
+    //     stranica,
+    //     sortirajPo,
+    //     poredakSortiranja
+    //   )
+    //     .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige.knjige))
+    //     .catch(odgovorNaError)
+    //     .finally(() => {
+    //       ucitavanje_queue.pop();
 
-          if (!ucitavanje_queue.length) postaviUcitavanje(false);
-        });
-    } else {
-      dajKnjigePoKategoriji(
-        kategorijaId,
-        stranica,
-        sortirajPo,
-        poredakSortiranja
-      )
-        .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige.knjige))
-        .catch(odgovorNaError)
-        .finally(() => {
-          ucitavanje_queue.pop();
-
-          if (!ucitavanje_queue.length) postaviUcitavanje(false);
-        });
-    }
-  }, [
-    state.stranica,
-    state.sortirajPo,
-    state.poredakSortiranja,
-    state.kategorijaId,
-  ]);
+    //       if (!ucitavanje_queue.length) postaviUcitavanje(false);
+    //     });
+    // }
+  }, []);
 
   const odgovorNaError = (e: any) => {
     toast({
@@ -268,13 +250,13 @@ export const KnjigeLista = () => {
               aria-label="Prethodna stranica"
               icon={<FaChevronLeft />}
               isDisabled={state.stranica === 0}
-              onClick={() => dispatch({ type: "dekrementuj" })}
+              onClick={() => console.log("STRANICA DOLE")}
             />
             <IconButton
               aria-label="Sledeca stranica"
               icon={<FaChevronRight />}
               isDisabled={knjige.length < 5}
-              onClick={() => dispatch({ type: "inkrementuj" })}
+              onClick={() => console.log("STRANICA GORE")}
             />
           </HStack>
         </>

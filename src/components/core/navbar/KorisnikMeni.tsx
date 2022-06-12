@@ -33,11 +33,14 @@ const KorisnikMobilniMeni = () => {
               <MenuItem as={Link} to={"/profil"}>
                 Moj profil
               </MenuItem>
-              <MenuItem as={Link} to={"/knjige"}>
+              <MenuItem as={Link} to={"/knjiga/lista"}>
                 Knjige
               </MenuItem>
               <MenuItem as={Link} to={"/kategorija/lista"}>
                 Kategorije
+              </MenuItem>
+              <MenuItem as={Link} to={"/autori/lista"}>
+                Autori
               </MenuItem>
               <MenuItem as={Link} to={"/istorija-kupovine"}>
                 Istorija kupovine
@@ -60,7 +63,12 @@ const KorisnikDesktopMeni = () => {
       <Button colorScheme={"teal"} variant={"link"} as={Link} to="/profil">
         Profil
       </Button>
-      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/knjige">
+      <Button
+        colorScheme={"teal"}
+        variant={"link"}
+        as={Link}
+        to="/knjiga/lista"
+      >
         Knjige
       </Button>
       <Button
@@ -78,6 +86,9 @@ const KorisnikDesktopMeni = () => {
         to="/kategorija/lista"
       >
         Kategorije
+      </Button>
+      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/autor/lista">
+        Autori
       </Button>
       <Button colorScheme={"teal"} variant={"link"} onClick={odjaviKorisnika}>
         Odjavi se

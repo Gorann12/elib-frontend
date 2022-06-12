@@ -1,7 +1,12 @@
 import axios from "axios";
 import { useContext } from "react";
 import { KorisnikContext } from "../context/KorisnikContext";
-import { Knjiga, KreirajKnjigu } from "../tipovi";
+import {
+  Knjiga,
+  KreirajKnjigu,
+  PoredakSortiranja,
+  SortiranjePo,
+} from "../tipovi";
 
 export const useKnjiga = () => {
   const { dajToken } = useContext(KorisnikContext);
@@ -33,42 +38,26 @@ export const useKnjiga = () => {
 
   const dajKnjige: (
     stranica?: number,
-    sortirajPo?: "naslov" | "cena",
-    smerSortiranja?: "asc" | "desc"
+    sortirajPo?: SortiranjePo,
+    smerSortiranja?: PoredakSortiranja,
+    idKategorije?: number
   ) => Promise<Knjiga[]> = async (
     stranica = 0,
     sortirajPo = "cena",
-    smerSortiranja = "asc"
+    smerSortiranja = "asc",
+    idKategorije = -1
   ) => {
-    const { data } = await axios.get<Knjiga[]>(`/knjiga`, {
+    const url =
+      idKategorije > -1 && idKategorije != null
+        ? `/kategorija/${idKategorije}/knjiga`
+        : "/knjiga";
+
+    const { data } = await axios.get<Knjiga[]>(url, {
       params: {
         stranica: stranica + "",
         sortirajPo,
         smerSortiranja,
         limit: "5",
-      },
-    });
-
-    return data;
-  };
-
-  const dajKnjigePoKategoriji: (
-    idKategorije: number,
-    stranica?: number,
-    sortirajPo?: "naslov" | "cena",
-    smerSortiranja?: "asc" | "desc"
-  ) => Promise<{ brojKnjiga: number; knjige: Knjiga[] }> = async (
-    idKategorije,
-    stranica = 0,
-    sortirajPo = "cena",
-    smerSortiranja = "asc"
-  ) => {
-    const { data } = await axios.get(`/kategorija/${idKategorije}/knjiga`, {
-      params: {
-        stranica: stranica + "",
-        limit: "5",
-        sortirajPo,
-        smerSortiranja,
       },
     });
 
@@ -95,7 +84,6 @@ export const useKnjiga = () => {
     kreirajKnjigu,
     azurirajKnjigu,
     dajKnjige,
-    dajKnjigePoKategoriji,
     dajKnjigu,
     izbrisiKnjigu,
   };
