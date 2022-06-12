@@ -36,17 +36,17 @@ export const useKnjiga = () => {
     return data;
   };
 
-  const dajKnjige: (
-    stranica?: number,
-    sortirajPo?: SortiranjePo,
-    smerSortiranja?: PoredakSortiranja,
-    idKategorije?: number
-  ) => Promise<Knjiga[]> = async (
+  const dajKnjige: (filter: {
+    stranica?: number;
+    sortirajPo?: SortiranjePo;
+    smerSortiranja?: PoredakSortiranja;
+    idKategorije?: number;
+  }) => Promise<Knjiga[]> = async ({
     stranica = 0,
     sortirajPo = "cena",
     smerSortiranja = "asc",
-    idKategorije = -1
-  ) => {
+    idKategorije = -1,
+  }) => {
     const url =
       idKategorije > -1 && idKategorije != null
         ? `/kategorija/${idKategorije}/knjiga`

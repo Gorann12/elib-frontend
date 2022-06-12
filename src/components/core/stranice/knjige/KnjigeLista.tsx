@@ -1,8 +1,16 @@
 import {
   Button,
   ButtonGroup,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
   FormControl,
   FormLabel,
+  Heading,
   HStack,
   IconButton,
   Select,
@@ -15,10 +23,24 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
   useToast,
+  VStack,
 } from "@chakra-ui/react";
-import { ChangeEvent, Reducer, useEffect, useReducer, useState } from "react";
-import { FaBook, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import {
+  ChangeEvent,
+  Reducer,
+  useEffect,
+  useReducer,
+  useRef,
+  useState,
+} from "react";
+import {
+  FaBook,
+  FaChevronLeft,
+  FaChevronRight,
+  FaFilter,
+} from "react-icons/fa";
 import {
   createSearchParams,
   Link,
@@ -28,16 +50,18 @@ import {
 } from "react-router-dom";
 import { useKategorija } from "../../../../hooks/useKategorija";
 import { useKnjiga } from "../../../../hooks/useKnjiga";
+import { useQuery } from "../../../../hooks/useQuery";
 import {
   Kategorija,
   Knjiga,
   PoredakSortiranja,
   SortiranjePo,
+  validirajPoredakSortiranja,
+  validirajSortiranjePo,
 } from "../../../../tipovi";
 import { Wrapper } from "../../../utils/ui";
 
 interface ReducerState {
-  stranica: number;
   sortirajPo: SortiranjePo;
   poredakSortiranja: PoredakSortiranja;
   kategorijaId: number | null;
@@ -49,10 +73,9 @@ type ReducerActions =
   | { type: "kategorija"; payload: number | null };
 
 const initialState: ReducerState = {
-  stranica: 0,
   sortirajPo: "cena",
   poredakSortiranja: "asc",
-  kategorijaId: null,
+  kategorijaId: -1,
 };
 
 const reducer = (state: ReducerState, action: ReducerActions) => {
@@ -75,56 +98,36 @@ export const KnjigeLista = () => {
     reducer,
     initialState
   );
-
   const { dajSveKategorije } = useKategorija();
   const { dajKnjige } = useKnjiga();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const navigate = useNavigate();
+
+  const btnRef = useRef(null);
   const toast = useToast();
+  const query = useQuery();
 
   useEffect(() => {
     postaviUcitavanje(true);
 
-    const { stranica, sortirajPo, poredakSortiranja, kategorijaId } = state;
-    // if (!kategorije.length) {
-    //   dajSveKategorije()
-    //     .then((res) => {
-    //       const preuzeteKategorije = res;
+    const { sortirajPo, poredakSortiranja, kategorijaId } = state;
+    const filter = {
+      stranica: parseInt(query.get("stranica") || "0"),
+      sortirajPo: validirajSortiranjePo(query.get("sortirajPo")) || sortirajPo,
+      poredakSortiranja:
+        validirajPoredakSortiranja(query.get("po;redakSortiranja")) ||
+        poredakSortiranja,
+      idKategorije: parseInt(query.get("idKategorije") || kategorijaId + ""),
+    };
 
-    //       postaviKategorije(preuzeteKategorije);
-    //     })
-    //     .catch((e) => navigate("/"))
-    //     .finally(() => {
-    //       ucitavanje_queue.pop();
-
-    //       if (!ucitavanje_queue.length) postaviUcitavanje(false);
-    //     });
-    // }
-
-    // if (!kategorijaId) {
-    //   dajKnjige(stranica, sortirajPo, poredakSortiranja)
-    //     .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige))
-    //     .catch(odgovorNaError)
-    //     .finally(() => {
-    //       ucitavanje_queue.pop();
-
-    //       if (!ucitavanje_queue.length) postaviUcitavanje(false);
-    //     });
-    // } else {
-    //   dajKnjigePoKategoriji(
-    //     kategorijaId,
-    //     stranica,
-    //     sortirajPo,
-    //     poredakSortiranja
-    //   )
-    //     .then((preuzeteKnjige) => postaviKnjige(preuzeteKnjige.knjige))
-    //     .catch(odgovorNaError)
-    //     .finally(() => {
-    //       ucitavanje_queue.pop();
-
-    //       if (!ucitavanje_queue.length) postaviUcitavanje(false);
-    //     });
-    // }
+    Promise.all<Knjiga[] | Kategorija[]>([
+      dajKnjige(filter),
+      dajSveKategorije(),
+    ]).then((rezultat) => {
+      console.log("REZULTAT", rezultat);
+      postaviUcitavanje(false);
+    });
   }, []);
 
   const odgovorNaError = (e: any) => {
@@ -135,7 +138,7 @@ export const KnjigeLista = () => {
       isClosable: true,
       status: "error",
     });
-    postaviKnjige([]);
+    // postaviKnjige([]);
   };
 
   return (
@@ -143,70 +146,127 @@ export const KnjigeLista = () => {
       {!ucitavanje ? (
         <>
           <HStack
+            alignContent={"center"}
+            justify={"space-between"}
+            mb={2}
             mt={10}
-            spacing={{ base: 0, lg: 10 }}
-            wrap={{ base: "wrap", lg: "nowrap" }}
           >
-            <FormControl>
-              <FormLabel htmlFor="kategorije">
-                Filtrirajte po kategoriji
-              </FormLabel>
-              <Select
-                id="kategorije"
-                placeholder="Izaberite kategoriju"
-                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                  dispatch({
-                    type: "kategorija",
-                    payload: Number.isNaN(parseInt(e.target.value))
-                      ? null
-                      : parseInt(e.target.value),
-                  })
-                }
-                value={state.kategorijaId || ""}
-              >
-                {kategorije.map((kategorija) => (
-                  <option key={kategorija.id} value={kategorija.id}>
-                    {kategorija.naziv}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="sortirajPo">Sortirajte po</FormLabel>
-              <Select
-                id="sortirajPo"
-                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                  dispatch({
-                    type: "sortirajPo",
-                    payload: e.target.value as SortiranjePo,
-                  })
-                }
-                value={state.sortirajPo}
-              >
-                <option value="cena">Ceni</option>
-                <option value="naslov">Naslovu</option>
-              </Select>
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="poredak">Poredak sortiranja</FormLabel>
-              <Select
-                id="poredak"
-                onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                  dispatch({
-                    type: "poredakSortiranja",
-                    payload: e.target.value as PoredakSortiranja,
-                  })
-                }
-                value={state.poredakSortiranja}
-              >
-                <option value="asc">Rastuce</option>
-                <option value="desc">Opadajuce</option>
-              </Select>
-            </FormControl>
+            <Heading color={"gray.600"} fontSize={"xl"}>
+              Knjige
+            </Heading>
+            <IconButton
+              aria-label="Filtriraj"
+              icon={<FaFilter />}
+              colorScheme={"facebook"}
+              variant={"outline"}
+              ref={btnRef}
+              onClick={onOpen}
+            />
+            <Drawer
+              isOpen={isOpen}
+              placement={"right"}
+              onClose={onClose}
+              finalFocusRef={btnRef}
+            >
+              <DrawerOverlay />
+              <DrawerContent>
+                <DrawerCloseButton />
+                <DrawerHeader>Filtriraj knjige</DrawerHeader>
+                <DrawerBody>
+                  <FormControl>
+                    <FormLabel
+                      htmlFor="kategorije"
+                      fontSize={12}
+                      fontWeight={"bold"}
+                    >
+                      Filtrirajte po kategoriji
+                    </FormLabel>
+                    <Select
+                      id="kategorije"
+                      placeholder="Izaberite kategoriju"
+                      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                        dispatch({
+                          type: "kategorija",
+                          payload: Number.isNaN(parseInt(e.target.value))
+                            ? null
+                            : parseInt(e.target.value),
+                        })
+                      }
+                      value={state.kategorijaId || ""}
+                    >
+                      {kategorije.map((kategorija) => (
+                        <option key={kategorija.id} value={kategorija.id}>
+                          {kategorija.naziv}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel
+                      htmlFor="sortirajPo"
+                      fontSize={12}
+                      fontWeight={"bold"}
+                      mt={4}
+                    >
+                      Sortirajte po
+                    </FormLabel>
+                    <Select
+                      id="sortirajPo"
+                      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                        dispatch({
+                          type: "sortirajPo",
+                          payload: e.target.value as SortiranjePo,
+                        })
+                      }
+                      value={state.sortirajPo}
+                    >
+                      <option value="cena">Ceni</option>
+                      <option value="naslov">Naslovu</option>
+                    </Select>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel
+                      htmlFor="poredak"
+                      fontSize={12}
+                      fontWeight={"bold"}
+                      mt={4}
+                    >
+                      Poredak sortiranja
+                    </FormLabel>
+                    <Select
+                      id="poredak"
+                      onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                        dispatch({
+                          type: "poredakSortiranja",
+                          payload: e.target.value as PoredakSortiranja,
+                        })
+                      }
+                      value={state.poredakSortiranja}
+                    >
+                      <option value="asc">Rastuce</option>
+                      <option value="desc">Opadajuce</option>
+                    </Select>
+                  </FormControl>
+                </DrawerBody>
+                <DrawerFooter>
+                  <Button
+                    variant="outline"
+                    colorScheme={"facebook"}
+                    mr={3}
+                    onClick={onClose}
+                  >
+                    Odustani
+                  </Button>
+                  <Button colorScheme={"facebook"}>Filtriraj</Button>
+                </DrawerFooter>
+              </DrawerContent>
+            </Drawer>
           </HStack>
           <TableContainer>
             <Table variant="simple" mt={10}>
-              <TableCaption>Stranica: {state.stranica}</TableCaption>
+              <TableCaption>
+                Stranica: {query.get("stranica") || 0}
+              </TableCaption>
               <Thead>
                 <Tr>
                   <Th>Naslov</Th>
@@ -249,7 +309,7 @@ export const KnjigeLista = () => {
             <IconButton
               aria-label="Prethodna stranica"
               icon={<FaChevronLeft />}
-              isDisabled={state.stranica === 0}
+              isDisabled={parseInt(query.get("stranica") || "0") === 0}
               onClick={() => console.log("STRANICA DOLE")}
             />
             <IconButton
@@ -261,7 +321,7 @@ export const KnjigeLista = () => {
           </HStack>
         </>
       ) : (
-        <Spinner position="absolute" top="50vh" left="50vh" />
+        <Spinner position="absolute" top="50vh" left="50vw" />
       )}
     </Wrapper>
   );
