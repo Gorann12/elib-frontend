@@ -9,13 +9,14 @@ import {
   Text,
   useDisclosure,
   useToast,
-  VStack
+  VStack,
 } from '@chakra-ui/react';
 import { useContext, useEffect, useState } from 'react';
 import { FaArchive } from 'react-icons/fa';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { KorisnikContext } from '../../../../context/KorisnikContext';
 import { useKnjiga } from '../../../../hooks/useKnjiga';
+import { useKorpa } from '../../../../hooks/useKorpa';
 import { lowerCamelCaseToDisplay } from '../../../../shared/regex/regex';
 import { Knjiga, UlogaKorisnika } from '../../../../tipovi';
 import { Dijalog } from '../../../utils/ui/Dijalog';
@@ -31,6 +32,7 @@ export const KnjigaDetaljnije = () => {
   const { id: idKnjige, autor, kategorije, autorId, ...podaci } = knjiga || {};
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { id } = useParams();
+  const { postaviUKorpu } = useKorpa();
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -77,6 +79,23 @@ export const KnjigaDetaljnije = () => {
     }
   };
 
+  const handleDodajUKorpuKlik = () => {
+    if (knjiga && knjiga.id) {
+      postaviUKorpu({
+        id: knjiga.id,
+        naslov: knjiga.naslov,
+        cena: knjiga.cena,
+      });
+      toast({
+        title: 'Uspeh',
+        description: `Uspesno ste dodali ${knjiga.naslov} u korpu!`,
+        isClosable: true,
+        duration: 5000,
+        status: 'success',
+      });
+    }
+  };
+
   return (
     <Wrapper>
       {!ucitavanje ? (
@@ -112,7 +131,11 @@ export const KnjigaDetaljnije = () => {
               </VStack>
             ))}
             {daLiKorisnikImaUlogu(UlogaKorisnika.KORISNIK) && (
-              <Button colorScheme={'messenger'} w={'fit-content'}>
+              <Button
+                colorScheme={'messenger'}
+                w={'fit-content'}
+                onClick={handleDodajUKorpuKlik}
+              >
                 Dodaj u korpu
               </Button>
             )}
@@ -121,7 +144,12 @@ export const KnjigaDetaljnije = () => {
                 <Button size={'sm'} colorScheme={'red'} onClick={onOpen}>
                   Izbrisi knjigu
                 </Button>
-                <Button size={'sm'} colorScheme={'telegram'}>
+                <Button
+                  size={'sm'}
+                  colorScheme={'telegram'}
+                  as={Link}
+                  to={`/knjiga/edit/${knjiga?.id}`}
+                >
                   Edituj knjigu
                 </Button>
               </HStack>

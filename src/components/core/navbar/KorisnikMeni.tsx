@@ -7,17 +7,17 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-} from "@chakra-ui/react";
-import { useContext } from "react";
-import { FaCartPlus, FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { Link } from "react-router-dom";
-import { KorisnikContext } from "../../../context/KorisnikContext";
+} from '@chakra-ui/react';
+import { useContext } from 'react';
+import { FaCartPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import { KorisnikContext } from '../../../context/KorisnikContext';
 
 const KorisnikMobilniMeni = () => {
   const { korisnik, odjaviKorisnika } = useContext(KorisnikContext);
 
   return (
-    <Box display={{ lg: "none" }}>
+    <Box display={{ lg: 'none' }}>
       <Menu closeOnBlur={true} closeOnSelect={true}>
         {({ isOpen }) => (
           <>
@@ -25,27 +25,29 @@ const KorisnikMobilniMeni = () => {
               as={Button}
               aria-label="Opcije"
               rightIcon={isOpen ? <FaChevronUp /> : <FaChevronDown />}
-              variant={"outline"}
+              variant={'outline'}
             >
               {korisnik && korisnik.ime}
             </MenuButton>
             <MenuList>
-              <MenuItem as={Link} to={"/profil"}>
+              <MenuItem as={Link} to={'/profil'}>
                 Moj profil
               </MenuItem>
-              <MenuItem as={Link} to={"/knjiga/lista"}>
+              <MenuItem as={Link} to={'/knjiga/lista'}>
                 Knjige
               </MenuItem>
-              <MenuItem as={Link} to={"/kategorija/lista"}>
+              <MenuItem as={Link} to={'/kategorija/lista'}>
                 Kategorije
               </MenuItem>
-              <MenuItem as={Link} to={"/autori/lista"}>
+              <MenuItem as={Link} to={'/autori/lista'}>
                 Autori
               </MenuItem>
-              <MenuItem as={Link} to={"/istorija-kupovine"}>
+              <MenuItem as={Link} to={'/istorija-kupovine'}>
                 Istorija kupovine
               </MenuItem>
-              <MenuItem>Korpa</MenuItem>
+              <MenuItem as={Link} to={'/korpa'}>
+                Korpa
+              </MenuItem>
               <MenuItem onClick={odjaviKorisnika}>Odjava</MenuItem>
             </MenuList>
           </>
@@ -59,45 +61,47 @@ const KorisnikDesktopMeni = () => {
   const { odjaviKorisnika } = useContext(KorisnikContext);
 
   return (
-    <HStack spacing={"1rem"} display={{ base: "none", lg: "block" }}>
-      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/profil">
+    <HStack spacing={'1rem'} display={{ base: 'none', lg: 'block' }}>
+      <Button colorScheme={'teal'} variant={'link'} as={Link} to="/profil">
         Profil
       </Button>
       <Button
-        colorScheme={"teal"}
-        variant={"link"}
+        colorScheme={'teal'}
+        variant={'link'}
         as={Link}
         to="/knjiga/lista"
       >
         Knjige
       </Button>
       <Button
-        colorScheme={"teal"}
-        variant={"link"}
+        colorScheme={'teal'}
+        variant={'link'}
         as={Link}
         to="/istorija-kupovine"
       >
         Istorija kupovine
       </Button>
       <Button
-        colorScheme={"teal"}
-        variant={"link"}
+        colorScheme={'teal'}
+        variant={'link'}
         as={Link}
         to="/kategorija/lista"
       >
         Kategorije
       </Button>
-      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/autor/lista">
+      <Button colorScheme={'teal'} variant={'link'} as={Link} to="/autor/lista">
         Autori
       </Button>
-      <Button colorScheme={"teal"} variant={"link"} onClick={odjaviKorisnika}>
+      <Button colorScheme={'teal'} variant={'link'} onClick={odjaviKorisnika}>
         Odjavi se
       </Button>
       <IconButton
-        colorScheme={"teal"}
+        colorScheme={'teal'}
         icon={<FaCartPlus />}
         aria-label="Korpa"
-        variant={"outline"}
+        variant={'outline'}
+        as={Link}
+        to={'/korpa'}
       />
     </HStack>
   );

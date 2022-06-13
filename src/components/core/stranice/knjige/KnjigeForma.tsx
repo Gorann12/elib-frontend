@@ -4,28 +4,36 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Select as ChakraSelect,
   Spinner,
   Text,
-  Select as ChakraSelect,
   useToast,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { useAutor } from "../../../../hooks/useAutor";
-import { useKategorija } from "../../../../hooks/useKategorija";
-import { Autor, Kategorija, KreirajKnjigu } from "../../../../tipovi";
-import { FormWrapper, Wrapper } from "../../../utils/ui";
-import Select from "react-select";
-import { useKnjiga } from "../../../../hooks/useKnjiga";
+} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import Select from 'react-select';
+import { useAutor } from '../../../../hooks/useAutor';
+import { useKategorija } from '../../../../hooks/useKategorija';
+import { useKnjiga } from '../../../../hooks/useKnjiga';
+import { Autor, Kategorija, Knjiga, KreirajKnjigu } from '../../../../tipovi';
+import { FormWrapper, Wrapper } from '../../../utils/ui';
 
 export const KnjigeForma = () => {
   const [ucitavanje, postaviUcitavanje] = useState(true);
   const [kategorije, postaviKategorije] = useState<Kategorija[]>([]);
   const [autori, postaviAutore] = useState<Autor[]>([]);
+  const [knjiga, postaviKnjigu] = useState<Knjiga | null>(null);
+
   const { dajSveKategorije } = useKategorija();
   const { dajSveAutore } = useAutor();
-  const { kreirajKnjigu } = useKnjiga();
+  const { kreirajKnjigu, dajKnjigu, azurirajKnjigu } = useKnjiga();
+
+  const { id } = useParams();
+
   const toast = useToast();
+  const navigate = useNavigate();
+
   const {
     control,
     handleSubmit,
@@ -35,20 +43,36 @@ export const KnjigeForma = () => {
   } = useForm<KreirajKnjigu>();
 
   useEffect(() => {
-    Promise.all<Kategorija[] | Autor[]>([dajSveKategorije(), dajSveAutore()])
+    const daLiJeIdValidan = id && !Number.isNaN(parseInt(id));
+    const promises = daLiJeIdValidan
+      ? [dajSveKategorije(), dajSveAutore(), dajKnjigu(parseInt(id))]
+      : [dajSveKategorije(), dajSveAutore()];
+
+    Promise.all(promises)
       .then((res) => {
         const [preuzeteKategorije, preuzetiAutori] = res;
 
         postaviKategorije(preuzeteKategorije as Kategorija[]);
         postaviAutore(preuzetiAutori as Autor[]);
+
+        if (res.length === 3) {
+          const knjiga = res[2] as Knjiga;
+          const { kategorije, autor, ...ostalo } = knjiga;
+
+          postaviKnjigu(knjiga);
+          reset({
+            ...ostalo,
+            idKategorija: kategorije.map((kategorija) => kategorija.id),
+          } as KreirajKnjigu);
+        }
       })
       .catch((e: any) => {
         const errorPoruka = e?.response?.data?.message;
 
         toast({
-          title: "Eror",
+          title: 'Eror',
           description: errorPoruka,
-          status: "error",
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
@@ -60,26 +84,30 @@ export const KnjigeForma = () => {
 
   const kreiraj = async (podaci: KreirajKnjigu) => {
     try {
-      await kreirajKnjigu(podaci);
-
-      reset();
-      toast({
-        title: "Success",
-        description: `Knjiga ${podaci.naslov} je uspesno kreirana!`,
-        duration: 5000,
-        status: "success",
-        isClosable: true,
-      });
+      if (knjiga?.id) {
+        await azurirajKnjigu(knjiga?.id, podaci);
+        navigate(`/knjiga/${knjiga?.id}`);
+      } else {
+        await kreirajKnjigu(podaci);
+        reset();
+        toast({
+          title: 'Success',
+          description: `Knjiga ${podaci.naslov} je uspesno kreirana`,
+          duration: 5000,
+          status: 'success',
+          isClosable: true,
+        });
+      }
     } catch (e: any) {
       const errorPoruka = e.response.data.message;
 
       toast({
-        title: "Error",
+        title: 'Error',
         description: Array.isArray(errorPoruka)
-          ? errorPoruka.join(", ")
+          ? errorPoruka.join(', ')
           : errorPoruka,
         duration: 5000,
-        status: "error",
+        status: 'error',
         isClosable: true,
       });
     }
@@ -90,14 +118,16 @@ export const KnjigeForma = () => {
       {!ucitavanje ? (
         <form onSubmit={handleSubmit(kreiraj)}>
           <FormWrapper>
-            <Text fontSize={"2xl"}>Kreiraj knjigu</Text>
+            <Text fontSize={'2xl'}>
+              {knjiga?.id ? 'Azuriraj' : 'Kreiraj'} knjigu
+            </Text>
             <FormControl isInvalid={!!errors.naslov}>
               <FormLabel htmlFor="naslov">Naslov</FormLabel>
               <Input
                 id="naslov"
                 type="text"
-                {...register("naslov", {
-                  required: "Ovo polje je obavezno",
+                {...register('naslov', {
+                  required: 'Ovo polje je obavezno',
                 })}
               />
               <FormErrorMessage>
@@ -110,8 +140,8 @@ export const KnjigeForma = () => {
               <ChakraSelect
                 placeholder="Izaberite autora"
                 id="authorId"
-                {...register("autorId", {
-                  required: "Obavezno polje",
+                {...register('autorId', {
+                  required: 'Obavezno polje',
                   valueAsNumber: true,
                 })}
               >
@@ -129,10 +159,10 @@ export const KnjigeForma = () => {
             <FormControl isInvalid={!!errors.opis}>
               <FormLabel htmlFor="opis">Opis</FormLabel>
               <Input
-                id={"opis"}
-                type={"text"}
-                {...register("opis", {
-                  required: "Ovo polje je obavezno",
+                id={'opis'}
+                type={'text'}
+                {...register('opis', {
+                  required: 'Ovo polje je obavezno',
                 })}
               />
               <FormErrorMessage>
@@ -143,13 +173,13 @@ export const KnjigeForma = () => {
             <FormControl isInvalid={!!errors.brojStrana}>
               <FormLabel htmlFor="brojStrana">Broj strana</FormLabel>
               <Input
-                id={"brojStrana"}
-                type={"number"}
-                {...register("brojStrana", {
-                  required: "Ovo polje je obavezno",
+                id={'brojStrana'}
+                type={'number'}
+                {...register('brojStrana', {
+                  required: 'Ovo polje je obavezno',
                   valueAsNumber: true,
                   min: {
-                    message: "Mora biti vec broj od 0",
+                    message: 'Mora biti vec broj od 0',
                     value: 0,
                   },
                 })}
@@ -163,10 +193,10 @@ export const KnjigeForma = () => {
             <FormControl isInvalid={!!errors.pismo}>
               <FormLabel htmlFor="pismo">Pismo</FormLabel>
               <Input
-                id={"pismo"}
-                type={"text"}
-                {...register("pismo", {
-                  required: "Ovo polje je obavezno",
+                id={'pismo'}
+                type={'text'}
+                {...register('pismo', {
+                  required: 'Ovo polje je obavezno',
                 })}
               />
               <FormErrorMessage>
@@ -177,10 +207,10 @@ export const KnjigeForma = () => {
             <FormControl isInvalid={!!errors.povez}>
               <FormLabel htmlFor="povez">Povez</FormLabel>
               <Input
-                id={"povez"}
-                type={"text"}
-                {...register("povez", {
-                  required: "Ovo polje je obavezno",
+                id={'povez'}
+                type={'text'}
+                {...register('povez', {
+                  required: 'Ovo polje je obavezno',
                 })}
               />
               <FormErrorMessage>
@@ -191,10 +221,10 @@ export const KnjigeForma = () => {
             <FormControl isInvalid={!!errors.dimenzije}>
               <FormLabel htmlFor="dimenzije">Dimenzije</FormLabel>
               <Input
-                id={"dimenzije"}
-                type={"text"}
-                {...register("dimenzije", {
-                  required: "Ovo polje je obavezno",
+                id={'dimenzije'}
+                type={'text'}
+                {...register('dimenzije', {
+                  required: 'Ovo polje je obavezno',
                 })}
               />
               <FormErrorMessage>
@@ -205,13 +235,13 @@ export const KnjigeForma = () => {
             <FormControl isInvalid={!!errors.cena}>
               <FormLabel htmlFor="cena">Cena</FormLabel>
               <Input
-                id={"cena"}
-                type={"number"}
-                {...register("cena", {
-                  required: "Ovo polje je obavezno",
+                id={'cena'}
+                type={'number'}
+                {...register('cena', {
+                  required: 'Ovo polje je obavezno',
                   valueAsNumber: true,
                   min: {
-                    message: "Mora biti vec broj od 0",
+                    message: 'Mora biti vec broj od 0',
                     value: 0,
                   },
                 })}
@@ -229,15 +259,25 @@ export const KnjigeForma = () => {
                 control={control}
                 name="idKategorija"
                 rules={{
-                  required: "Ovo polje je obavezno",
+                  required: 'Ovo polje je obavezno',
                 }}
-                render={({ field: { onChange } }) => (
+                render={({ field: { onChange, value } }) => (
                   <Select
+                    // @ts-ignore
                     onChange={(val) => onChange(val.map((c) => c.value))}
+                    // @ts-ignore
                     options={kategorije.map((kategorija) => ({
                       value: kategorija.id,
                       label: kategorija.naziv,
                     }))}
+                    defaultValue={
+                      knjiga
+                        ? knjiga.kategorije.map((kategorija) => ({
+                            value: kategorija.id,
+                            label: kategorija.naziv,
+                          }))
+                        : []
+                    }
                     isMulti
                   />
                 )}
@@ -249,11 +289,11 @@ export const KnjigeForma = () => {
             </FormControl>
 
             <Button
-              colorScheme={"linkedin"}
-              type={"submit"}
+              colorScheme={'linkedin'}
+              type={'submit'}
               disabled={isSubmitting}
             >
-              Kreiraj
+              {knjiga?.id ? 'Izmeni' : 'Kreiraj'}
             </Button>
           </FormWrapper>
         </form>

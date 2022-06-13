@@ -39,7 +39,7 @@ import {
   FaChevronRight,
   FaFilter,
 } from 'react-icons/fa';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useKategorija } from '../../../../hooks/useKategorija';
 import { useKnjiga } from '../../../../hooks/useKnjiga';
 import {
@@ -104,8 +104,6 @@ export const KnjigeLista = () => {
   const [trenutnaStranica, setTrenutnaStranica] = useState(
     parseInt(searchParams.get('stranica') || '0')
   );
-
-  const navigate = useNavigate();
 
   const btnRef = useRef(null);
   const toast = useToast();

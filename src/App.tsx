@@ -1,26 +1,27 @@
-import { Navbar } from "./components/core/navbar/Navbar";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "./app.css";
-import { Prijava, Registracija } from "./components/core/autentifikacija";
-import { useContext } from "react";
-import { KorisnikContext } from "./context/KorisnikContext";
-import { Spinner } from "@chakra-ui/react";
-import { Profil } from "./components/core/stranice/korisnik/profil";
+import { Spinner } from '@chakra-ui/react';
+import { useContext } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './app.css';
+import { Prijava, Registracija } from './components/core/autentifikacija';
+import { Navbar } from './components/core/navbar/Navbar';
+import { AutorDetaljnije } from './components/core/stranice/autor/AutorDetaljnije';
+import { AutorForma } from './components/core/stranice/autor/AutorForma';
+import { AutorLista } from './components/core/stranice/autor/AutorLista';
+import { KategorijaDetaljnije } from './components/core/stranice/kategorija/KategorijaDetaljnije';
+import { KategorijaForma } from './components/core/stranice/kategorija/KategorijaForma';
+import { KategorijaLista } from './components/core/stranice/kategorija/KategorijaLista';
+import { KnjigaDetaljnije } from './components/core/stranice/knjige/KnjigaDetaljnije';
+import { KnjigeForma } from './components/core/stranice/knjige/KnjigeForma';
+import { KnjigeLista } from './components/core/stranice/knjige/KnjigeLista';
+import { Profil } from './components/core/stranice/korisnik/profil';
+import { KorpaProizvodi } from './components/core/stranice/korpa/KorpaProizvodi';
 import {
-  UlogovanKorisnikGuard,
   GostGuard,
   UlogaGuard,
-} from "./components/utils/GuardedRoute";
-import { UlogaKorisnika } from "./tipovi";
-import { KategorijaForma } from "./components/core/stranice/kategorija/KategorijaForma";
-import { KategorijaLista } from "./components/core/stranice/kategorija/KategorijaLista";
-import { KategorijaDetaljnije } from "./components/core/stranice/kategorija/KategorijaDetaljnije";
-import { AutorForma } from "./components/core/stranice/autor/AutorForma";
-import { AutorLista } from "./components/core/stranice/autor/AutorLista";
-import { AutorDetaljnije } from "./components/core/stranice/autor/AutorDetaljnije";
-import { KnjigeForma } from "./components/core/stranice/knjige/KnjigeForma";
-import { KnjigeLista } from "./components/core/stranice/knjige/KnjigeLista";
-import { KnjigaDetaljnije } from "./components/core/stranice/knjige/KnjigaDetaljnije";
+  UlogovanKorisnikGuard,
+} from './components/utils/GuardedRoute';
+import { KorisnikContext } from './context/KorisnikContext';
+import { UlogaKorisnika } from './tipovi';
 
 export const App = () => {
   const { inicijalnoUcitavanje } = useContext(KorisnikContext);
@@ -91,6 +92,23 @@ export const App = () => {
 
             <Route path="/knjiga/lista" element={<KnjigeLista />} />
             <Route path="/knjiga/:id" element={<KnjigaDetaljnije />} />
+            <Route
+              path="/knjiga/edit/:id"
+              element={
+                <UlogaGuard uloga={UlogaKorisnika.ADMIN}>
+                  <KnjigeForma />
+                </UlogaGuard>
+              }
+            />
+
+            <Route
+              path="/korpa"
+              element={
+                <UlogaGuard uloga={UlogaKorisnika.KORISNIK}>
+                  <KorpaProizvodi />
+                </UlogaGuard>
+              }
+            />
           </Routes>
         </Router>
       )}
