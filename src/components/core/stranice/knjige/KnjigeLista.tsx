@@ -1,6 +1,5 @@
 import {
   Button,
-  ButtonGroup,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -25,8 +24,7 @@ import {
   Tr,
   useDisclosure,
   useToast,
-  VStack,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 import {
   ChangeEvent,
   Reducer,
@@ -34,23 +32,16 @@ import {
   useReducer,
   useRef,
   useState,
-} from "react";
+} from 'react';
 import {
   FaBook,
   FaChevronLeft,
   FaChevronRight,
   FaFilter,
-} from "react-icons/fa";
-import {
-  createSearchParams,
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
-import { useKategorija } from "../../../../hooks/useKategorija";
-import { useKnjiga } from "../../../../hooks/useKnjiga";
-import { useQuery } from "../../../../hooks/useQuery";
+} from 'react-icons/fa';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useKategorija } from '../../../../hooks/useKategorija';
+import { useKnjiga } from '../../../../hooks/useKnjiga';
 import {
   Kategorija,
   Knjiga,
@@ -58,46 +49,51 @@ import {
   SortiranjePo,
   validirajPoredakSortiranja,
   validirajSortiranjePo,
-} from "../../../../tipovi";
-import { Wrapper } from "../../../utils/ui";
+} from '../../../../tipovi';
+import { Wrapper } from '../../../utils/ui';
 
 interface ReducerState {
   sortirajPo: SortiranjePo;
-  poredakSortiranja: PoredakSortiranja;
-  kategorijaId: number | null;
+  smerSortiranja: PoredakSortiranja;
+  idKategorije: number | null;
 }
 
 type ReducerActions =
-  | { type: "sortirajPo"; payload: SortiranjePo }
-  | { type: "poredakSortiranja"; payload: PoredakSortiranja }
-  | { type: "kategorija"; payload: number | null };
+  | { type: 'sortirajPo'; payload: SortiranjePo }
+  | { type: 'smerSortiranja'; payload: PoredakSortiranja }
+  | { type: 'kategorija'; payload: number | null }
+  | { type: 'postaviSve'; payload: ReducerState };
 
 const initialState: ReducerState = {
-  sortirajPo: "cena",
-  poredakSortiranja: "asc",
-  kategorijaId: -1,
+  sortirajPo: 'cena',
+  smerSortiranja: 'asc',
+  idKategorije: -1,
 };
 
 const reducer = (state: ReducerState, action: ReducerActions) => {
   switch (action.type) {
-    case "sortirajPo":
+    case 'sortirajPo':
       return { ...state, sortirajPo: action.payload };
-    case "poredakSortiranja":
-      return { ...state, poredakSortiranja: action.payload };
-    case "kategorija":
-      return { ...state, kategorijaId: action.payload, stranica: 0 };
+    case 'smerSortiranja':
+      return { ...state, smerSortiranja: action.payload };
+    case 'kategorija':
+      return { ...state, idKategorije: action.payload, stranica: 0 };
+    case 'postaviSve':
+      return { ...action.payload };
   }
 };
 
 const parsirajQueryParametre = (obj: { [key: string]: any }) => {
-  return Object.keys(obj).filter((kljuc) => obj[kljuc]);
+  return Object.keys(obj)
+    .filter((kljuc) => obj[kljuc] || !Number.isNaN(obj[kljuc]))
+    .reduce((acc, kljuc) => ({ ...acc, [kljuc]: obj[kljuc] + '' }), {});
 };
 
 export const KnjigeLista = () => {
   const [kategorije, postaviKategorije] = useState<Kategorija[]>([]);
   const [knjige, postaviKnjige] = useState<Knjiga[]>([]);
   const [ucitavanje, postaviUcitavanje] = useState(true);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [state, dispatch] = useReducer<Reducer<ReducerState, ReducerActions>>(
     reducer,
     initialState
@@ -105,28 +101,33 @@ export const KnjigeLista = () => {
   const { dajSveKategorije } = useKategorija();
   const { dajKnjige } = useKnjiga();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [trenutnaStranica, setTrenutnaStranica] = useState(
+    parseInt(searchParams.get('stranica') || '0')
+  );
 
   const navigate = useNavigate();
 
   const btnRef = useRef(null);
   const toast = useToast();
-  const query = useQuery();
 
   useEffect(() => {
     postaviUcitavanje(true);
 
-    const { sortirajPo, poredakSortiranja, kategorijaId } = state;
+    const { sortirajPo, smerSortiranja, idKategorije } = state;
     const filter = {
-      stranica: parseInt(query.get("stranica") || "0"),
-      sortirajPo: validirajSortiranjePo(query.get("sortirajPo")) || sortirajPo,
-      poredakSortiranja:
-        validirajPoredakSortiranja(query.get("po;redakSortiranja")) ||
-        poredakSortiranja,
-      idKategorije: parseInt(query.get("idKategorije") || kategorijaId + ""),
+      sortirajPo:
+        validirajSortiranjePo(searchParams.get('sortirajPo')) || sortirajPo,
+      smerSortiranja:
+        validirajPoredakSortiranja(searchParams.get('smerSortiranja')) ||
+        smerSortiranja,
+      idKategorije: parseInt(
+        searchParams.get('idKategorije') || idKategorije + ''
+      ),
     };
 
+    dispatch({ type: 'postaviSve', payload: filter as ReducerState });
     Promise.all<Knjiga[] | Kategorija[]>([
-      dajKnjige(filter),
+      dajKnjige({ ...filter, stranica: trenutnaStranica }),
       dajSveKategorije(),
     ])
       .then((rezultat) => {
@@ -135,17 +136,42 @@ export const KnjigeLista = () => {
       })
       .catch(odgovorNaError)
       .finally(() => postaviUcitavanje(false));
-  }, []);
+  }, [searchParams]);
+
+  const filtriraj = () => {
+    onClose();
+
+    if (
+      state.idKategorije !== -1 &&
+      state.idKategorije != null &&
+      !Number.isNaN(state.idKategorije)
+    ) {
+      navigujSaQueryParametrima(0);
+
+      return;
+    }
+
+    navigujSaQueryParametrima(trenutnaStranica);
+  };
 
   const odgovorNaError = (e: any) => {
     toast({
-      title: "Eror",
-      description: e.message || "Nesto je poslo po zlu",
+      title: 'Eror',
+      description: e.message || 'Nesto je poslo po zlu',
       duration: 5000,
       isClosable: true,
-      status: "error",
+      status: 'error',
     });
     postaviKnjige([]);
+  };
+
+  const navigujSaQueryParametrima = (stranica: number) => {
+    setTrenutnaStranica(stranica);
+
+    setSearchParams({
+      ...parsirajQueryParametre(state),
+      stranica: stranica.toString(),
+    });
   };
 
   return (
@@ -153,25 +179,25 @@ export const KnjigeLista = () => {
       {!ucitavanje ? (
         <>
           <HStack
-            alignContent={"center"}
-            justify={"space-between"}
+            alignContent={'center'}
+            justify={'space-between'}
             mb={2}
             mt={10}
           >
-            <Heading color={"gray.600"} fontSize={"xl"}>
+            <Heading color={'gray.600'} fontSize={'xl'}>
               Knjige
             </Heading>
             <IconButton
               aria-label="Filtriraj"
               icon={<FaFilter />}
-              colorScheme={"facebook"}
-              variant={"outline"}
+              colorScheme={'facebook'}
+              variant={'outline'}
               ref={btnRef}
               onClick={onOpen}
             />
             <Drawer
               isOpen={isOpen}
-              placement={"right"}
+              placement={'right'}
               onClose={onClose}
               finalFocusRef={btnRef}
             >
@@ -184,7 +210,7 @@ export const KnjigeLista = () => {
                     <FormLabel
                       htmlFor="kategorije"
                       fontSize={12}
-                      fontWeight={"bold"}
+                      fontWeight={'bold'}
                     >
                       Filtrirajte po kategoriji
                     </FormLabel>
@@ -193,13 +219,13 @@ export const KnjigeLista = () => {
                       placeholder="Izaberite kategoriju"
                       onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                         dispatch({
-                          type: "kategorija",
+                          type: 'kategorija',
                           payload: Number.isNaN(parseInt(e.target.value))
                             ? null
                             : parseInt(e.target.value),
                         })
                       }
-                      value={state.kategorijaId || ""}
+                      value={state.idKategorije || ''}
                     >
                       {kategorije.map((kategorija) => (
                         <option key={kategorija.id} value={kategorija.id}>
@@ -212,7 +238,7 @@ export const KnjigeLista = () => {
                     <FormLabel
                       htmlFor="sortirajPo"
                       fontSize={12}
-                      fontWeight={"bold"}
+                      fontWeight={'bold'}
                       mt={4}
                     >
                       Sortirajte po
@@ -221,7 +247,7 @@ export const KnjigeLista = () => {
                       id="sortirajPo"
                       onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                         dispatch({
-                          type: "sortirajPo",
+                          type: 'sortirajPo',
                           payload: e.target.value as SortiranjePo,
                         })
                       }
@@ -235,7 +261,7 @@ export const KnjigeLista = () => {
                     <FormLabel
                       htmlFor="poredak"
                       fontSize={12}
-                      fontWeight={"bold"}
+                      fontWeight={'bold'}
                       mt={4}
                     >
                       Poredak sortiranja
@@ -244,11 +270,11 @@ export const KnjigeLista = () => {
                       id="poredak"
                       onChange={(e: ChangeEvent<HTMLSelectElement>) =>
                         dispatch({
-                          type: "poredakSortiranja",
+                          type: 'smerSortiranja',
                           payload: e.target.value as PoredakSortiranja,
                         })
                       }
-                      value={state.poredakSortiranja}
+                      value={state.smerSortiranja}
                     >
                       <option value="asc">Rastuce</option>
                       <option value="desc">Opadajuce</option>
@@ -258,22 +284,22 @@ export const KnjigeLista = () => {
                 <DrawerFooter>
                   <Button
                     variant="outline"
-                    colorScheme={"facebook"}
+                    colorScheme={'facebook'}
                     mr={3}
                     onClick={onClose}
                   >
                     Odustani
                   </Button>
-                  <Button colorScheme={"facebook"}>Filtriraj</Button>
+                  <Button colorScheme={'facebook'} onClick={filtriraj}>
+                    Filtriraj
+                  </Button>
                 </DrawerFooter>
               </DrawerContent>
             </Drawer>
           </HStack>
           <TableContainer>
             <Table variant="simple" mt={10}>
-              <TableCaption>
-                Stranica: {query.get("stranica") || 0}
-              </TableCaption>
+              <TableCaption>Stranica: {trenutnaStranica}</TableCaption>
               <Thead>
                 <Tr>
                   <Th>Naslov</Th>
@@ -290,7 +316,7 @@ export const KnjigeLista = () => {
                       <Button
                         leftIcon={<FaBook />}
                         variant="link"
-                        colorScheme={"facebook"}
+                        colorScheme={'facebook'}
                         as={Link}
                         to={`/knjiga/${knjiga.id}`}
                       >
@@ -300,9 +326,9 @@ export const KnjigeLista = () => {
                     <Td>
                       {knjiga.kategorije
                         .map((kategorija) => kategorija.naziv)
-                        .join(", ")}
+                        .join(', ')}
                     </Td>
-                    <Td isNumeric fontWeight={"bold"}>
+                    <Td isNumeric fontWeight={'bold'}>
                       {knjiga.cena} RSD
                     </Td>
                     <Td>{knjiga.autor.ime}</Td>
@@ -312,18 +338,18 @@ export const KnjigeLista = () => {
               </Tbody>
             </Table>
           </TableContainer>
-          <HStack justify={"right"} mt={7}>
+          <HStack justify={'right'} mt={7}>
             <IconButton
               aria-label="Prethodna stranica"
               icon={<FaChevronLeft />}
-              isDisabled={parseInt(query.get("stranica") || "0") === 0}
-              onClick={() => console.log("STRANICA DOLE")}
+              isDisabled={trenutnaStranica === 0}
+              onClick={() => navigujSaQueryParametrima(trenutnaStranica - 1)}
             />
             <IconButton
               aria-label="Sledeca stranica"
               icon={<FaChevronRight />}
               isDisabled={knjige.length < 5}
-              onClick={() => console.log("STRANICA GORE")}
+              onClick={() => navigujSaQueryParametrima(trenutnaStranica + 1)}
             />
           </HStack>
         </>

@@ -9,19 +9,19 @@ import {
   Text,
   useDisclosure,
   useToast,
-  VStack,
-} from "@chakra-ui/react";
-import { useContext, useEffect, useState } from "react";
-import { FaArchive, FaChevronLeft } from "react-icons/fa";
-import { useNavigate, useParams } from "react-router-dom";
-import { KorisnikContext } from "../../../../context/KorisnikContext";
-import { useKnjiga } from "../../../../hooks/useKnjiga";
-import { lowerCamelCaseToDisplay } from "../../../../shared/regex/regex";
-import { Knjiga, UlogaKorisnika } from "../../../../tipovi";
-import { Dijalog } from "../../../utils/ui/Dijalog";
-import { Wrapper } from "../../../utils/ui/Wrapper";
+  VStack
+} from '@chakra-ui/react';
+import { useContext, useEffect, useState } from 'react';
+import { FaArchive } from 'react-icons/fa';
+import { useNavigate, useParams } from 'react-router-dom';
+import { KorisnikContext } from '../../../../context/KorisnikContext';
+import { useKnjiga } from '../../../../hooks/useKnjiga';
+import { lowerCamelCaseToDisplay } from '../../../../shared/regex/regex';
+import { Knjiga, UlogaKorisnika } from '../../../../tipovi';
+import { Dijalog } from '../../../utils/ui/Dijalog';
+import { Wrapper } from '../../../utils/ui/Wrapper';
 
-const colors = ["orange", "teal", "messenger"];
+const colors = ['orange', 'teal', 'messenger'];
 
 export const KnjigaDetaljnije = () => {
   const [ucitavanje, postaviUcitavanje] = useState(true);
@@ -40,11 +40,11 @@ export const KnjigaDetaljnije = () => {
         .then((preuzetaKnjiga) => postaviKnjigu(preuzetaKnjiga))
         .catch((e) =>
           toast({
-            title: "Eror",
-            description: e.message || "",
+            title: 'Eror',
+            description: e.message || '',
             isClosable: true,
             duration: 5000,
-            status: "error",
+            status: 'error',
           })
         )
         .finally(() => postaviUcitavanje(false));
@@ -57,7 +57,7 @@ export const KnjigaDetaljnije = () => {
       postaviUcitavanje(true);
 
       izbrisiKnjigu(parseInt(id))
-        .then(() => navigate("/knjiga/lista"))
+        .then(() => navigate('/knjiga/lista'))
         .catch((e: any) => {
           const errorPoruka = e.response.data.message;
 
@@ -65,11 +65,11 @@ export const KnjigaDetaljnije = () => {
           postaviUcitavanje(false);
           onClose();
           toast({
-            title: "Error",
+            title: 'Error',
             description: Array.isArray(errorPoruka)
-              ? errorPoruka.join(", ")
+              ? errorPoruka.join(', ')
               : errorPoruka,
-            status: "error",
+            status: 'error',
             duration: 5000,
             isClosable: true,
           });
@@ -81,19 +81,11 @@ export const KnjigaDetaljnije = () => {
     <Wrapper>
       {!ucitavanje ? (
         <>
-          <Button
-            leftIcon={<FaChevronLeft />}
-            onClick={() => navigate("/knjiga/lista", { replace: true })}
-            variant="link"
-            mt={"3rem"}
-          >
-            Nazad na listu
-          </Button>
-          <HStack align="center" mt={".5rem"}>
+          <HStack align="center" mt={'2rem'}>
             {knjiga?.kategorije.map((kategorija, index) => (
               <Tag
-                size={"sm"}
-                variant={"solid"}
+                size={'sm'}
+                variant={'solid'}
                 colorScheme={colors[index % colors.length]}
                 key={kategorija.id}
               >
@@ -102,34 +94,34 @@ export const KnjigaDetaljnije = () => {
               </Tag>
             ))}
           </HStack>
-          <Heading fontSize={"2xl"} mt={"1rem"} color={"gray.700"}>
+          <Heading fontSize={'2xl'} mt={'1rem'} color={'gray.700'}>
             {knjiga?.naslov}
           </Heading>
-          <Text fontSize={"md"} mb={"2rem"} color={"gray.700"}>
+          <Text fontSize={'md'} mb={'2rem'} color={'gray.700'}>
             {autor?.ime}
           </Text>
-          <VStack bgColor={"blue.50"} p={3} align={"left"} spacing={6}>
+          <VStack bgColor={'blue.50'} p={3} align={'left'} spacing={6}>
             {Object.keys(podaci).map((key) => (
               <VStack key={key} justify="left" align="left">
-                <Text fontWeight="700" fontSize={"md"}>
+                <Text fontWeight="700" fontSize={'md'}>
                   {lowerCamelCaseToDisplay(key)}
                 </Text>
-                <Text fontWeight="500" fontSize={"sm"}>
+                <Text fontWeight="500" fontSize={'sm'}>
                   {podaci[key as keyof typeof podaci]}
                 </Text>
               </VStack>
             ))}
             {daLiKorisnikImaUlogu(UlogaKorisnika.KORISNIK) && (
-              <Button colorScheme={"messenger"} w={"fit-content"}>
+              <Button colorScheme={'messenger'} w={'fit-content'}>
                 Dodaj u korpu
               </Button>
             )}
             {daLiKorisnikImaUlogu(UlogaKorisnika.ADMIN) && (
               <HStack>
-                <Button size={"sm"} colorScheme={"red"} onClick={onOpen}>
+                <Button size={'sm'} colorScheme={'red'} onClick={onOpen}>
                   Izbrisi knjigu
                 </Button>
-                <Button size={"sm"} colorScheme={"telegram"}>
+                <Button size={'sm'} colorScheme={'telegram'}>
                   Edituj knjigu
                 </Button>
               </HStack>
@@ -142,7 +134,7 @@ export const KnjigaDetaljnije = () => {
           </VStack>
         </>
       ) : (
-        <Spinner position={"absolute"} top={"50vh"} left={"50vw"} />
+        <Spinner position={'absolute'} top={'50vh'} left={'50vw'} />
       )}
     </Wrapper>
   );

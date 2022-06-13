@@ -7,34 +7,34 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-} from "@chakra-ui/react";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { Link } from "react-router-dom";
+} from '@chakra-ui/react';
+import { GiHamburgerMenu } from 'react-icons/gi';
+import { Link } from 'react-router-dom';
 
 const GostMobilniMeni = () => {
   return (
-    <Box display={{ md: "none" }}>
+    <Box display={{ md: 'none' }}>
       <Menu closeOnBlur={true} closeOnSelect={true}>
         <MenuButton
           as={IconButton}
           aria-label="Opcije"
           icon={<GiHamburgerMenu />}
-          variant={"outline"}
+          variant={'outline'}
         />
         <MenuList>
-          <MenuItem as={Link} to={"/prijava"}>
+          <MenuItem as={Link} to={'/prijava'}>
             Prijava
           </MenuItem>
-          <MenuItem as={Link} to={"/registracija"}>
+          <MenuItem as={Link} to={'/registracija'}>
             Registracija
           </MenuItem>
-          <MenuItem as={Link} to={"/knjiga/lista"}>
+          <MenuItem as={Link} to={'/knjiga/lista'}>
             Knjige
           </MenuItem>
-          <MenuItem as={Link} to={"/autor/lista"}>
+          <MenuItem as={Link} to={'/autor/lista'}>
             Autori
           </MenuItem>
-          <MenuItem as={Link} to={"/kategorija/lista"}>
+          <MenuItem as={Link} to={'/kategorija/lista'}>
             Kategorije
           </MenuItem>
         </MenuList>
@@ -45,32 +45,32 @@ const GostMobilniMeni = () => {
 
 const GostDesktopMeni = () => {
   return (
-    <HStack spacing={"1rem"} display={{ base: "none", md: "block" }}>
+    <HStack spacing={'1rem'} display={{ base: 'none', md: 'block' }}>
       <Button
-        colorScheme={"teal"}
-        variant={"link"}
+        colorScheme={'teal'}
+        variant={'link'}
         as={Link}
         to="/knjiga/lista"
       >
         Knjige
       </Button>
-      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/autor/lista">
+      <Button colorScheme={'teal'} variant={'link'} as={Link} to="/autor/lista">
         Autori
       </Button>
       <Button
-        colorScheme={"teal"}
-        variant={"link"}
+        colorScheme={'teal'}
+        variant={'link'}
         as={Link}
         to="/kategorija/lista"
       >
-        Kategoije
+        Kategorije
       </Button>
-      <Button colorScheme={"teal"} variant={"link"} as={Link} to="/prijava">
+      <Button colorScheme={'teal'} variant={'link'} as={Link} to="/prijava">
         Prijava
       </Button>
       <Button
-        colorScheme={"teal"}
-        variant={"link"}
+        colorScheme={'teal'}
+        variant={'link'}
         as={Link}
         to="/registracija"
       >
