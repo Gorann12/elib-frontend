@@ -9,12 +9,12 @@ import {
   Th,
   Thead,
   Tr,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useKategorija } from "../../../../hooks/useKategorija";
-import { Kategorija } from "../../../../tipovi";
-import { Wrapper } from "../../../utils/ui";
+} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useKategorija } from '../../../../hooks/useKategorija';
+import { Kategorija } from '../../../../tipovi';
+import { Wrapper } from '../../../utils/ui';
 
 export const KategorijaLista = () => {
   const { dajSveKategorije } = useKategorija();
@@ -28,8 +28,8 @@ export const KategorijaLista = () => {
   }, []);
 
   return (
-    <Wrapper pt={"2rem"}>
-      <Heading color={"gray.600"} fontSize={"xl"} mb={5}>
+    <Wrapper pt={'2rem'}>
+      <Heading color={'gray.600'} fontSize={'xl'} mb={5}>
         Kategorije
       </Heading>
       {!ucitavanje ? (
@@ -37,28 +37,28 @@ export const KategorijaLista = () => {
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th>Naziv</Th>
-                <Th>Opis</Th>
+                <Th pl={0}>Naziv</Th>
+                <Th pl={0}>Opis</Th>
               </Tr>
             </Thead>
             <Tbody>
               {kategorije.length === 0 && <Tr>Trenutno nema kategorija</Tr>}
               {kategorije.map((kategorija) => (
                 <Tr key={kategorija.id}>
-                  <Td>
+                  <Td pl={0}>
                     <Button
-                      variant={"link"}
+                      variant={'link'}
                       as={Link}
                       to={`/kategorija/${kategorija.id}`}
-                      colorScheme={"facebook"}
+                      colorScheme={'facebook'}
                       state={kategorija}
                     >
                       {kategorija.naziv}
                     </Button>
                   </Td>
-                  <Td>
+                  <Td pl={0}>
                     {kategorija.opis.substring(0, 50)}
-                    {kategorija.opis.length > 50 && "..."}
+                    {kategorija.opis.length > 50 && '...'}
                   </Td>
                 </Tr>
               ))}
@@ -66,7 +66,7 @@ export const KategorijaLista = () => {
           </Table>
         </TableContainer>
       ) : (
-        <Spinner position="absolute" top={"50vh"} left={"50vw"} />
+        <Spinner position="absolute" top={'50vh'} left={'50vw'} />
       )}
     </Wrapper>
   );

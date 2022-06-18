@@ -10,12 +10,12 @@ import {
   Thead,
   Tr,
   useToast,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { useAutor } from "../../../../hooks/useAutor";
-import { Autor } from "../../../../tipovi";
-import { Wrapper } from "../../../utils/ui";
+} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAutor } from '../../../../hooks/useAutor';
+import { Autor } from '../../../../tipovi';
+import { Wrapper } from '../../../utils/ui';
 
 export const AutorLista = () => {
   const { dajSveAutore } = useAutor();
@@ -32,9 +32,9 @@ export const AutorLista = () => {
         const errorPoruka = e.response.data.message;
 
         toast({
-          title: "Eror",
+          title: 'Eror',
           description: errorPoruka,
-          status: "error",
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
@@ -43,8 +43,8 @@ export const AutorLista = () => {
   }, []);
 
   return (
-    <Wrapper pt={"2rem"}>
-      <Heading color={"gray.600"} fontSize={"xl"} mb={5}>
+    <Wrapper pt={'2rem'}>
+      <Heading color={'gray.600'} fontSize={'xl'} mb={5}>
         Autori
       </Heading>
       {!ucitavanje ? (
@@ -52,40 +52,40 @@ export const AutorLista = () => {
           <Table variant="simple">
             <Thead>
               <Tr>
-                <Th>Ime</Th>
-                <Th>Biografija</Th>
-                <Th>Mesto Rodjenja</Th>
-                <Th>Godina Rodjenja</Th>
+                <Th pl={0}>Ime</Th>
+                <Th pl={0}>Biografija</Th>
+                <Th pl={0}>Mesto Rodjenja</Th>
+                <Th pl={0}>Godina Rodjenja</Th>
               </Tr>
             </Thead>
             <Tbody>
               {autori.length === 0 && <Tr>Trenutno nema autora</Tr>}
               {autori.map((autor) => (
                 <Tr key={autor.id}>
-                  <Td>
+                  <Td pl={0}>
                     <Button
-                      variant={"link"}
+                      variant={'link'}
                       as={Link}
                       to={`/autor/${autor.id}`}
-                      colorScheme={"facebook"}
+                      colorScheme={'facebook'}
                       state={autor}
                     >
                       {autor.ime}
                     </Button>
                   </Td>
-                  <Td>
+                  <Td pl={0}>
                     {autor.biografija.substring(0, 50)}
-                    {autor.biografija.length > 50 && "..."}
+                    {autor.biografija.length > 50 && '...'}
                   </Td>
-                  <Td>{autor.mestoRodjenja}</Td>
-                  <Td>{autor.godinaRodjenja}</Td>
+                  <Td pl={0}>{autor.mestoRodjenja}</Td>
+                  <Td pl={0}>{autor.godinaRodjenja}</Td>
                 </Tr>
               ))}
             </Tbody>
           </Table>
         </TableContainer>
       ) : (
-        <Spinner position="absolute" top={"50vh"} left={"50vw"} />
+        <Spinner position="absolute" top={'50vh'} left={'50vw'} />
       )}
     </Wrapper>
   );

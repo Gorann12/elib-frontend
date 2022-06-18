@@ -300,17 +300,21 @@ export const KnjigeLista = () => {
               <TableCaption>Stranica: {trenutnaStranica}</TableCaption>
               <Thead>
                 <Tr>
-                  <Th>Naslov</Th>
-                  <Th>Kategorije</Th>
-                  <Th isNumeric>Cena</Th>
-                  <Th>Pisac</Th>
-                  <Th isNumeric>Broj Strana</Th>
+                  <Th pl={0}>Naslov</Th>
+                  <Th pl={0}>Kategorije</Th>
+                  <Th pl={0} isNumeric>
+                    Cena
+                  </Th>
+                  <Th pl={0}>Pisac</Th>
+                  <Th pl={0} isNumeric>
+                    Broj Strana
+                  </Th>
                 </Tr>
               </Thead>
               <Tbody>
                 {knjige.map((knjiga) => (
                   <Tr key={knjiga.id}>
-                    <Td>
+                    <Td pl={0}>
                       <Button
                         leftIcon={<FaBook />}
                         variant="link"
@@ -321,16 +325,18 @@ export const KnjigeLista = () => {
                         {knjiga.naslov}
                       </Button>
                     </Td>
-                    <Td>
+                    <Td pl={0}>
                       {knjiga.kategorije
                         .map((kategorija) => kategorija.naziv)
                         .join(', ')}
                     </Td>
-                    <Td isNumeric fontWeight={'bold'}>
+                    <Td pl={0} isNumeric fontWeight={'bold'}>
                       {knjiga.cena} RSD
                     </Td>
-                    <Td>{knjiga.autor.ime}</Td>
-                    <Td isNumeric>{knjiga.brojStrana}</Td>
+                    <Td pl={0}>{knjiga.autor.ime}</Td>
+                    <Td pl={0} isNumeric>
+                      {knjiga.brojStrana}
+                    </Td>
                   </Tr>
                 ))}
               </Tbody>
