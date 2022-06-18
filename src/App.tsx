@@ -20,6 +20,7 @@ import { KnjigeForma } from './components/core/stranice/knjige/KnjigeForma';
 import { KnjigeLista } from './components/core/stranice/knjige/KnjigeLista';
 import { Profil } from './components/core/stranice/korisnik/profil';
 import { KorpaProizvodi } from './components/core/stranice/korpa/KorpaProizvodi';
+import { IstorijaKupovine } from './components/core/stranice/transakcija/IstorijaKupovine';
 import {
   GostGuard,
   UlogaGuard,
@@ -112,6 +113,15 @@ export const App = () => {
               element={
                 <UlogaGuard uloga={UlogaKorisnika.KORISNIK}>
                   <KorpaProizvodi />
+                </UlogaGuard>
+              }
+            />
+
+            <Route
+              path="/istorija"
+              element={
+                <UlogaGuard uloga={UlogaKorisnika.KORISNIK}>
+                  <IstorijaKupovine />
                 </UlogaGuard>
               }
             />

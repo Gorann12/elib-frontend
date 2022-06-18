@@ -38,6 +38,18 @@ export const KorpaProizvodi = () => {
       kolicina: knjigeIzKorpe[kljuc].kolicina,
     }));
 
+    if (!narudzbina.length) {
+      toast({
+        title: 'Eror',
+        description: 'Nemate ni jednu knjigu u korpi!',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+
+      return;
+    }
+
     naruci(narudzbina)
       .then((res) =>
         toast({

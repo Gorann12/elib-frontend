@@ -10,7 +10,7 @@ import {
 } from '@chakra-ui/react';
 import { useContext } from 'react';
 import { FaCartPlus, FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { KorisnikContext } from '../../../context/KorisnikContext';
 
 const KorisnikMobilniMeni = () => {
@@ -36,13 +36,7 @@ const KorisnikMobilniMeni = () => {
               <MenuItem as={Link} to={'/knjiga/lista'}>
                 Knjige
               </MenuItem>
-              <MenuItem as={Link} to={'/kategorija/lista'}>
-                Kategorije
-              </MenuItem>
-              <MenuItem as={Link} to={'/autori/lista'}>
-                Autori
-              </MenuItem>
-              <MenuItem as={Link} to={'/istorija-kupovine'}>
+              <MenuItem as={Link} to={'/istorija'}>
                 Istorija kupovine
               </MenuItem>
               <MenuItem as={Link} to={'/korpa'}>
@@ -62,51 +56,42 @@ const KorisnikDesktopMeni = () => {
 
   return (
     <HStack spacing={'1rem'} display={{ base: 'none', lg: 'block' }}>
-      <Button
-        colorScheme={'facebook'}
-        variant={'link'}
-        as={Link}
+      <NavLink
         to="/profil"
-        fontWeight={400}
+        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
       >
-        Profil
-      </Button>
-      <Button
-        colorScheme={'facebook'}
-        variant={'link'}
-        as={Link}
+        <Button
+          colorScheme={'facebook'}
+          variant={'link'}
+          fontWeight={'inherit'}
+        >
+          Profil
+        </Button>
+      </NavLink>
+      <NavLink
         to="/knjiga/lista"
-        fontWeight={400}
+        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
       >
-        Knjige
-      </Button>
-      <Button
-        colorScheme={'facebook'}
-        variant={'link'}
-        as={Link}
-        to="/istorija-kupovine"
-        fontWeight={400}
+        <Button
+          colorScheme={'facebook'}
+          variant={'link'}
+          fontWeight={'inherit'}
+        >
+          Knjige
+        </Button>
+      </NavLink>
+      <NavLink
+        to="/istorija"
+        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
       >
-        Istorija kupovine
-      </Button>
-      <Button
-        colorScheme={'facebook'}
-        variant={'link'}
-        as={Link}
-        to="/kategorija/lista"
-        fontWeight={400}
-      >
-        Kategorije
-      </Button>
-      <Button
-        colorScheme={'facebook'}
-        variant={'link'}
-        as={Link}
-        to="/autor/lista"
-        fontWeight={400}
-      >
-        Autori
-      </Button>
+        <Button
+          colorScheme={'facebook'}
+          variant={'link'}
+          fontWeight={'inherit'}
+        >
+          Istorija kupovine
+        </Button>
+      </NavLink>
       <Button
         colorScheme={'facebook'}
         variant={'link'}

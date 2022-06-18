@@ -107,6 +107,8 @@ export const KnjigaDetaljnije = () => {
                 variant={'solid'}
                 colorScheme={colors[index % colors.length]}
                 key={kategorija.id}
+                as={Link}
+                to={`/kategorija/${kategorija.id}`}
               >
                 <TagLeftIcon as={FaArchive} />
                 <TagLabel>{kategorija.naziv}</TagLabel>
@@ -116,10 +118,21 @@ export const KnjigaDetaljnije = () => {
           <Heading fontSize={'2xl'} mt={'1rem'} color={'gray.700'}>
             {knjiga?.naslov}
           </Heading>
-          <Text fontSize={'md'} mb={'2rem'} color={'gray.700'}>
+          <Text
+            fontSize={'md'}
+            color={'gray.700'}
+            as={Link}
+            to={`/autor/${autor?.id}`}
+          >
             {autor?.ime}
           </Text>
-          <VStack bgColor={'blue.50'} p={3} align={'left'} spacing={6}>
+          <VStack
+            bgColor={'blue.50'}
+            p={3}
+            align={'left'}
+            spacing={6}
+            mt={'1rem'}
+          >
             {Object.keys(podaci).map((key) => (
               <VStack key={key} justify="left" align="left">
                 <Text fontWeight="700" fontSize={'md'}>

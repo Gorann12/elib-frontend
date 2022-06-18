@@ -31,12 +31,6 @@ const GostMobilniMeni = () => {
           <MenuItem as={Link} to={'/knjiga/lista'}>
             Knjige
           </MenuItem>
-          <MenuItem as={Link} to={'/autor/lista'}>
-            Autori
-          </MenuItem>
-          <MenuItem as={Link} to={'/kategorija/lista'}>
-            Kategorije
-          </MenuItem>
         </MenuList>
       </Menu>
     </Box>
@@ -56,30 +50,6 @@ const GostDesktopMeni = () => {
           fontWeight={'inherit'}
         >
           Knjige
-        </Button>
-      </NavLink>
-      <NavLink
-        to="autor/lista"
-        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
-      >
-        <Button
-          colorScheme={'facebook'}
-          variant={'link'}
-          fontWeight={'inherit'}
-        >
-          Autori
-        </Button>
-      </NavLink>
-      <NavLink
-        to="kategorija/lista"
-        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
-      >
-        <Button
-          colorScheme={'facebook'}
-          variant={'link'}
-          fontWeight={'inherit'}
-        >
-          Kategorije
         </Button>
       </NavLink>
       <NavLink
