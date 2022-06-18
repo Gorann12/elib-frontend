@@ -21,6 +21,10 @@ export const useKorpa = () => {
     return JSON.parse(localStorage.getItem('korpa') || '{}');
   };
 
+  const ocistiKorpu = () => {
+    localStorage.setItem('korpa', JSON.stringify({}));
+  };
+
   const izbrisiKnjigu = (id: number) => {
     if (!localStorage.getItem('korpa')) {
       localStorage.setItem('korpa', '{}');
@@ -44,5 +48,5 @@ export const useKorpa = () => {
     return knjige;
   };
 
-  return { postaviUKorpu, dajKnjigeIzKorpe, izbrisiKnjigu };
+  return { postaviUKorpu, dajKnjigeIzKorpe, izbrisiKnjigu, ocistiKorpu };
 };

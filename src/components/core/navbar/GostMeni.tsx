@@ -9,7 +9,7 @@ import {
   MenuList,
 } from '@chakra-ui/react';
 import { GiHamburgerMenu } from 'react-icons/gi';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 const GostMobilniMeni = () => {
   return (
@@ -46,36 +46,66 @@ const GostMobilniMeni = () => {
 const GostDesktopMeni = () => {
   return (
     <HStack spacing={'1rem'} display={{ base: 'none', md: 'block' }}>
-      <Button
-        colorScheme={'teal'}
-        variant={'link'}
-        as={Link}
-        to="/knjiga/lista"
+      <NavLink
+        to="knjiga/lista"
+        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
       >
-        Knjige
-      </Button>
-      <Button colorScheme={'teal'} variant={'link'} as={Link} to="/autor/lista">
-        Autori
-      </Button>
-      <Button
-        colorScheme={'teal'}
-        variant={'link'}
-        as={Link}
-        to="/kategorija/lista"
+        <Button
+          colorScheme={'facebook'}
+          variant={'link'}
+          fontWeight={'inherit'}
+        >
+          Knjige
+        </Button>
+      </NavLink>
+      <NavLink
+        to="autor/lista"
+        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
       >
-        Kategorije
-      </Button>
-      <Button colorScheme={'teal'} variant={'link'} as={Link} to="/prijava">
-        Prijava
-      </Button>
-      <Button
-        colorScheme={'teal'}
-        variant={'link'}
-        as={Link}
+        <Button
+          colorScheme={'facebook'}
+          variant={'link'}
+          fontWeight={'inherit'}
+        >
+          Autori
+        </Button>
+      </NavLink>
+      <NavLink
+        to="kategorija/lista"
+        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
+      >
+        <Button
+          colorScheme={'facebook'}
+          variant={'link'}
+          fontWeight={'inherit'}
+        >
+          Kategorije
+        </Button>
+      </NavLink>
+      <NavLink
+        to="/prijava"
+        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
+      >
+        <Button
+          colorScheme={'facebook'}
+          variant={'link'}
+          fontWeight={'inherit'}
+        >
+          Prijava
+        </Button>
+      </NavLink>
+      <NavLink
         to="/registracija"
+        style={({ isActive }) => ({ fontWeight: isActive ? 700 : 400 })}
       >
-        Registracija
-      </Button>
+        <Button
+          colorScheme={'facebook'}
+          variant={'link'}
+          fontWeight={'inherit'}
+        >
+          Registracija
+        </Button>
+      </NavLink>
     </HStack>
   );
 };

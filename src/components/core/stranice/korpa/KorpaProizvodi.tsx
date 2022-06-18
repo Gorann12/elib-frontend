@@ -5,10 +5,12 @@ import {
   Heading,
   HStack,
   Text,
+  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import { useKorpa } from '../../../../hooks/useKorpa';
+import { useTransakcija } from '../../../../hooks/useTransakcija';
 import { IndexedElementKorpe } from '../../../../tipovi';
 import { Wrapper } from '../../../utils/ui';
 
@@ -16,7 +18,9 @@ export const KorpaProizvodi = () => {
   const [knjigeIzKorpe, postaviKnjigeIzKorpe] = useState<IndexedElementKorpe>(
     {}
   );
-  const { dajKnjigeIzKorpe, izbrisiKnjigu } = useKorpa();
+  const { dajKnjigeIzKorpe, izbrisiKnjigu, ocistiKorpu } = useKorpa();
+  const { naruciKnjige: naruci } = useTransakcija();
+  const toast = useToast();
 
   useEffect(() => {
     const knjige = dajKnjigeIzKorpe();
@@ -26,6 +30,37 @@ export const KorpaProizvodi = () => {
   const handleIzbrisiJednuKnjiguKlik = (id: number) => {
     const ostatakKnjiga = izbrisiKnjigu(id);
     postaviKnjigeIzKorpe(ostatakKnjiga);
+  };
+
+  const naruciKnjige = () => {
+    const narudzbina = Object.keys(knjigeIzKorpe).map((kljuc) => ({
+      id: knjigeIzKorpe[kljuc].id,
+      kolicina: knjigeIzKorpe[kljuc].kolicina,
+    }));
+
+    naruci(narudzbina)
+      .then((res) =>
+        toast({
+          title: 'Uspeh',
+          description: 'Uspesno ste narucili!',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        })
+      )
+      .catch((e) =>
+        toast({
+          title: 'Eror',
+          description: 'Nesto je poslo po zlu',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        })
+      )
+      .finally(() => {
+        ocistiKorpu();
+        postaviKnjigeIzKorpe({});
+      });
   };
 
   return (
@@ -39,7 +74,9 @@ export const KorpaProizvodi = () => {
         <Heading fontSize={'2xl'} color={'gray.700'}>
           Korpa
         </Heading>
-        <Button colorScheme={'facebook'}>Naruci</Button>
+        <Button colorScheme={'facebook'} onClick={() => naruciKnjige()}>
+          Naruci
+        </Button>
       </HStack>
       {Object.keys(knjigeIzKorpe).map((kljuc) => (
         <VStack

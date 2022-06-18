@@ -1,6 +1,11 @@
 import { Spinner } from '@chakra-ui/react';
 import { useContext } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Navigate,
+  Route,
+  Routes,
+} from 'react-router-dom';
 import './app.css';
 import { Prijava, Registracija } from './components/core/autentifikacija';
 import { Navbar } from './components/core/navbar/Navbar';
@@ -34,6 +39,7 @@ export const App = () => {
         <Router>
           <Navbar />
           <Routes>
+            <Route path="/" element={<Navigate to="/knjiga/lista" />} />
             <Route
               path="/prijava"
               element={

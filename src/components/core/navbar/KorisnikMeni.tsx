@@ -62,46 +62,67 @@ const KorisnikDesktopMeni = () => {
 
   return (
     <HStack spacing={'1rem'} display={{ base: 'none', lg: 'block' }}>
-      <Button colorScheme={'teal'} variant={'link'} as={Link} to="/profil">
+      <Button
+        colorScheme={'facebook'}
+        variant={'link'}
+        as={Link}
+        to="/profil"
+        fontWeight={400}
+      >
         Profil
       </Button>
       <Button
-        colorScheme={'teal'}
+        colorScheme={'facebook'}
         variant={'link'}
         as={Link}
         to="/knjiga/lista"
+        fontWeight={400}
       >
         Knjige
       </Button>
       <Button
-        colorScheme={'teal'}
+        colorScheme={'facebook'}
         variant={'link'}
         as={Link}
         to="/istorija-kupovine"
+        fontWeight={400}
       >
         Istorija kupovine
       </Button>
       <Button
-        colorScheme={'teal'}
+        colorScheme={'facebook'}
         variant={'link'}
         as={Link}
         to="/kategorija/lista"
+        fontWeight={400}
       >
         Kategorije
       </Button>
-      <Button colorScheme={'teal'} variant={'link'} as={Link} to="/autor/lista">
+      <Button
+        colorScheme={'facebook'}
+        variant={'link'}
+        as={Link}
+        to="/autor/lista"
+        fontWeight={400}
+      >
         Autori
       </Button>
-      <Button colorScheme={'teal'} variant={'link'} onClick={odjaviKorisnika}>
+      <Button
+        colorScheme={'facebook'}
+        variant={'link'}
+        onClick={odjaviKorisnika}
+        fontWeight={400}
+      >
         Odjavi se
       </Button>
       <IconButton
-        colorScheme={'teal'}
+        colorScheme={'facebook'}
         icon={<FaCartPlus />}
         aria-label="Korpa"
         variant={'outline'}
         as={Link}
         to={'/korpa'}
+        fontWeight={400}
       />
     </HStack>
   );
